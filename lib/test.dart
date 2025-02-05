@@ -8,6 +8,7 @@ import 'package:wbl/Pages/Candidate%20Pages/Stipend/stipend.dart';
 import 'package:wbl/Pages/Login%20Page/Enrollment%20Form/Candidate%20Enrollment%20Form/candidate_enrollment_form.dart';
 import 'package:wbl/Pages/Login%20Page/login_page.dart';
 import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
+import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/new_loginpage_format.dart';
 
 // ignore: must_be_immutable
 class TestPage extends StatefulWidget {
@@ -37,6 +38,10 @@ class _CandidateProfileState extends State<TestPage> {
       "subtitle": {'L1': const LevelOnePage(), "L2": const LevelTwoPage()}
     },
     {
+      'icon': Icons.work,
+      'title': <String, dynamic>{'Certi': const LevelOnePage()},
+    },
+    {
       'icon': Icons.logout,
       'title': <String, dynamic>{
         'Logout': const LoginPage(
@@ -47,19 +52,20 @@ class _CandidateProfileState extends State<TestPage> {
     }
   ];
 
-  Map<String, String?> user = {
+  Map<String, dynamic> user = {
     'firstName': 'Dimple',
     'lastName': 'Kaundal',
     'profileImage': null,
     "center": "C-DAC, Mohali",
-    'center type': 'Student',
+    'roll': 'Student',
+    'profile': Text('Add Profile page in user details')
   };
 
   @override
   Widget build(BuildContext context) {
     LoginPageFormat.bodyWidget = widget.bodyWidget;
     LoginPageFormat.selectedButtonName = widget.selectedButtonName;
-    return LoginPageFormat(
+    return NewLoginpageFormat(
       user: user,
       menuItems: menuItems,
     );

@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
 import 'package:wbl/test.dart';
-
-import 'Pages/Welcome Page/welcome_page.dart';
 
 void main() {
   runApp(const MyApp());

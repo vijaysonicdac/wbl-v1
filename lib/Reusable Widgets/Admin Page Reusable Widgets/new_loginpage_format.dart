@@ -78,6 +78,9 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
               currentIndex: NewLoginpageFormat.currentMenuIndex ??= 0,
               onTap: (value) {
                 setState(() {
+                  if (menuItems[value] == 'Logout') {
+                    MyFun.navigatToPagewithoutBack(context, WelcomePage());
+                  }
                   NewLoginpageFormat.currentMenuIndex = value;
                   getSubMenuItems();
                 });
@@ -298,6 +301,10 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                                     : Colors.transparent),
                         onPressed: () {
                           setState(() {
+                            if (menuItems[j] == 'Logout') {
+                              MyFun.navigatToPagewithoutBack(
+                                  context, WelcomePage());
+                            }
                             NewLoginpageFormat.currentMenuIndex = j;
                             getSubMenuItems();
                           });

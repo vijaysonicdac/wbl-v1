@@ -75,7 +75,7 @@ class AddvacancyState extends State<Addvacancy> {
       context,
       MaterialPageRoute(
         builder: (context) => AdminLoginPage(
-          bodyWidget: const Vacancyclass(),
+          bodyWidget: VacancyClass(),
         ),
       ),
     );

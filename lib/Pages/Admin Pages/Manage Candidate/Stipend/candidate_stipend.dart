@@ -1,5 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/Delete%20Api%20functions/delete_api_function.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
 
 class Stipendclass extends StatefulWidget {
   const Stipendclass({super.key});
@@ -24,77 +26,90 @@ class StipendclassState extends State<Stipendclass> {
   final List<String> levelList = ['select', 'Level 1', 'Level 2', 'Level 3'];
   final List<String> yearList = ['select', '2022', '2023', '2024'];
 
-  final List<Map<String, dynamic>> candidates = [
-    {
-      "AICTE ID": 'STU6390800df1e491670414349',
-      "CANDIDATE NAME": "aniket",
-      "EMAIL": 'aniket.bobby007@gmail.com',
-      "AMOUNT": "1",
-      "ABSENT DAYS": "12",
-      "START DATE": "1 Aug. 2023",
-      "END DATE": "16 Aug. 2023"
-    },
-    {
-      "AICTE ID": 'STU6390800df1e491670414349',
-      "CANDIDATE NAME": "aniket",
-      "EMAIL": 'aniket.bobby007@gmail.com',
-      "AMOUNT": "25",
-      "ABSENT DAYS": "15",
-      "START DATE": "1 Aug. 2023",
-      "END DATE": "16 Aug. 2023"
-    },
-  ];
+  List<Map<String, dynamic>> candidates = [];
   List<Map<String, dynamic>> filtercandidate = [];
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    filtercandidate = candidates;
+    fetchStipendData();
+  }
+
+  Future<void> fetchStipendData() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      List<dynamic> responseData = await getApiStipend();
+      if (kDebugMode) {
+        print('$responseData');
+      }
+      setState(() {
+        candidates = List<Map<String, dynamic>>.from(responseData);
+        filtercandidate = candidates;
+        isLoading = false;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching stipend data: $e');
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 4,
-          runSpacing: 8.0,
-          alignment: WrapAlignment.start,
-          children: [
-            _buildSearchField(),
-            mySearchButton(selectedCohort, cohortList, 'Current Cohort'),
-            mySearchButton(selectedState, stateList, 'State'),
-            mySearchButton(selectedLevel, levelList, 'Level'),
-            mySearchButton(selectedYear, yearList, 'Year'),
-          ],
-        ),
-        const SizedBox(height: 10),
-        SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                  minWidth: screenWidth - LoginPageFormat.sidebarWidth),
-              child: Card(
-                child: DataTable(
-                  headingRowColor: WidgetStateProperty.all(
-                    const Color.fromARGB(255, 224, 230, 224),
-                  ),
-                  columns: _buildColumns(),
-                  rows: filtercandidate
-                      .map((Map<String, dynamic> candidate) =>
-                          _buildRows(candidate))
-                      .toList(),
-                ),
-              ),
-            ),
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 4,
+            runSpacing: 8.0,
+            alignment: WrapAlignment.start,
+            children: [
+              _buildSearchField(),
+              mySearchButton(selectedCohort, cohortList, 'Current Cohort'),
+              mySearchButton(selectedState, stateList, 'State'),
+              mySearchButton(selectedLevel, levelList, 'Level'),
+              mySearchButton(selectedYear, yearList, 'Year'),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 10),
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                          minWidth: screenWidth - 200),
+                      child: Card(
+                        child: DataTable(
+                          headingRowColor: WidgetStateProperty.all(
+                            const Color.fromARGB(255, 224, 230, 224),
+                          ),
+                          columns: _buildColumns(),
+                          rows: filtercandidate.isNotEmpty
+                              ? filtercandidate
+                                  .map((Map<String, dynamic> candidate) =>
+                                      _buildRows(candidate))
+                                  .toList()
+                              : [],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+        ],
+      ),
     );
   }
 
@@ -136,13 +151,13 @@ class StipendclassState extends State<Stipendclass> {
   DataRow _buildRows(Map<String, dynamic> candidate) {
     return DataRow(
       cells: [
-        DataCell(_buildLabel(candidate['AICTE ID'].toString())),
-        DataCell(_buildLabel(candidate['CANDIDATE NAME'].toString())),
-        DataCell(_buildLabel(candidate['EMAIL'].toString())),
-        DataCell(_buildLabel(candidate['AMOUNT'].toString())),
-        DataCell(_buildLabel(candidate['ABSENT DAYS'].toString())),
-        DataCell(_buildLabel(candidate['START DATE'].toString())),
-        DataCell(_buildLabel(candidate['END DATE'].toString())),
+        DataCell(Text(candidate['aicteId']?.toString() ?? '')),
+        DataCell(Text(candidate['candidateName']?.toString() ?? '')),
+        DataCell(Text(candidate['email']?.toString() ?? '')),
+        DataCell(Text(candidate['amount']?.toString() ?? '')),
+        DataCell(Text(candidate['absentDays']?.toString() ?? '')),
+        DataCell(Text(candidate['startDate']?.toString() ?? '')),
+        DataCell(Text(candidate['endDate']?.toString() ?? '')),
         DataCell(
           IconButton(
             icon: const Icon(Icons.delete, color: Colors.red),
@@ -155,47 +170,49 @@ class StipendclassState extends State<Stipendclass> {
 
   searchlist() {
     if (searchQuery.isEmpty) {
-      filtercandidate = candidates;
+      setState(() {
+        filtercandidate = candidates;
+      });
     } else {
-      filtercandidate = candidates
-          .where((candidate) =>
-              candidate['AICTE ID']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['CnANDIDATE NAME']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['EMAIL']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['AMOUNT']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['ABSENT DAYS']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['START DATE']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()) ||
-              candidate['END DATE']
-                  .toString()
-                  .toLowerCase()
-                  .contains(searchQuery.toLowerCase()))
-          .toList();
+      setState(() {
+        filtercandidate = candidates
+            .where((candidate) =>
+                candidate['aicteId']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['candidateName']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['email']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['amount']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['absentDays']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['startDate']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['endDate']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
+            .toList();
+      });
     }
   }
 
   Widget _buildLabel(String label) {
     return Expanded(
-      child: Text(
-        label,
-      ),
+      child: Text(label),
     );
   }
 
@@ -243,16 +260,19 @@ class StipendclassState extends State<Stipendclass> {
         return AlertDialog(
           title: const Text('Do you want to delete stipend?'),
           content: Text(
-            "You won't be able to revert this for ${candidate["CANDIDATE NAME"]}?",
+            "You won't be able to revert this for ${candidate["candidateName"]}?",
           ),
           actions: <Widget>[
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue[700],
               ),
-              onPressed: () {
+              onPressed: () async {
+                await deleteStipend(context, candidate['id'].toString());
+
                 setState(() {
                   candidates.remove(candidate);
+                  filtercandidate = candidates;
                 });
                 Navigator.of(context).pop();
               },

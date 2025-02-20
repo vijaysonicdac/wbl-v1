@@ -281,6 +281,7 @@ class _FileUploadWidgetState extends State<FileUploadWidget> {
         setState(() {
           fileName = "File too large. Must be under 500KB.";
         });
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('File size must be under 500KB')),
         );

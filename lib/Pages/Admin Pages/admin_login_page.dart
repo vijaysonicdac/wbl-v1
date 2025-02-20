@@ -6,11 +6,12 @@ import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/AICET%20%20ID/candida
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/Assessment/candidate_assesment.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candidatelist_page.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/Cohort/candidate_cohart.dart';
+import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/Stipend/candidate_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/Vacancy/candiatate_vacancy_page.dart';
 import 'package:wbl/Pages/Candidate%20Pages/Stipend/stipend.dart';
 import 'package:wbl/Pages/Login%20Page/Enrollment%20Form/Admin%20Enrollment%20Form/participating_institution_registration.dart';
 import 'package:wbl/Pages/Welcome%20Page/welcome_page.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
+import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/new_loginpage_format.dart';
 
 class AdminLoginPage extends StatefulWidget {
   AdminLoginPage({
@@ -49,7 +50,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
       'title': <String, dynamic>{'Manage Candidate': null},
       'subtitle': {
         "Candidate List": CandidateList(),
-        'Stipend': const StipendPage(),
+        'Stipend': Stipendclass(),
         'Cohort': const Cohortpage(),
         'Assessment': const Assesmentpage(),
         'AICET IDs': const AicteId()
@@ -57,7 +58,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     },
     {
       'icon': Icons.work,
-      'title': <String, dynamic>{'Vacancy': const Vacancyclass()},
+      'title': <String, dynamic>{'Vacancy': VacancyClass()},
     },
     {
       'icon': Icons.logout,
@@ -67,9 +68,7 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginPageFormat.bodyWidget = widget.bodyWidget;
-    LoginPageFormat.selectedButtonName = widget.selectedButtonName;
-    return LoginPageFormat(
+    return NewLoginpageFormat(
       menuItems: menuItems,
       user: user,
     );

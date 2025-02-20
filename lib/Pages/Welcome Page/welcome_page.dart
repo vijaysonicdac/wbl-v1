@@ -797,128 +797,119 @@ class _MyState extends State<WelcomePage> {
                 ),
               ),
             ),
-            Container(
-              // decoration: const BoxDecoration(
-              //   image: DecorationImage(
-              //     image: AssetImage(
-              //         'assets/images/opportunitiesavailablebgimg.png'),
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              child: Padding(
-                padding: EdgeInsets.all(
-                  screenWidth * .05,
-                ),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Opportunities Available In',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Padding(
+              padding: EdgeInsets.all(
+                screenWidth * .05,
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Opportunities Available In',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Image.asset('assets/images/Vector1.png'),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        int crossAxisCount;
-                        if (constraints.maxWidth < 800) {
-                          crossAxisCount = 3; // 3 columns for small screens
-                        } else if (constraints.maxWidth < 1000) {
-                          crossAxisCount = 4; // 4 columns for medium screens
-                        } else {
-                          crossAxisCount = 7; // 7 columns for large screens
-                        }
-                        return Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * .05),
-                          child: GridView.count(
-                            crossAxisCount: crossAxisCount,
-                            crossAxisSpacing: 2,
-                            mainAxisSpacing: 2,
-                            shrinkWrap: true,
-                            children: [
-                              cityCard(context, "Bangalore",
-                                  'assets/images/banglore.png'),
-                              cityCard(context, "Bhubaneswar",
-                                  'assets/images/bhubhaneshwar.png'),
-                              cityCard(context, "Chennai",
-                                  'assets/images/chennai.png'),
-                              cityCard(
-                                  context, "Delhi", 'assets/images/delhi.png'),
-                              cityCard(context, "Gangtok",
-                                  'assets/images/gangtok.png'),
-                              cityCard(context, "Guwahati",
-                                  'assets/images/guwahati.png'),
-                              cityCard(context, "Hyderabad",
-                                  'assets/images/hyderabad.png'),
-                              cityCard(context, "Jaipur",
-                                  'assets/images/jaipur.png'),
-                              cityCard(context, "Kolkata",
-                                  'assets/images/kolkata.png'),
-                              cityCard(context, "Lucknow",
-                                  'assets/images/lucknow.png'),
-                              cityCard(context, "Mohali",
-                                  'assets/images/mohali.png'),
-                              cityCard(context, "Mumbai",
-                                  'assets/images/mumbai.png'),
-                              cityCard(
-                                  context, "Noida", 'assets/images/noida.png'),
-                              cityCard(
-                                  context, "Patna", 'assets/images/patna.png'),
-                              cityCard(
-                                  context, "Pune", 'assets/images/pune.png'),
-                              cityCard(context, "Shillong",
-                                  'assets/images/shillong.png'),
-                              cityCard(context, "Shimla",
-                                  'assets/images/shimla.png'),
-                              cityCard(context, "Srinagar",
-                                  'assets/images/Srinagar.png'),
-                              cityCard(context, "Thiruvananthapuram",
-                                  'assets/images/thiruvananthapuram.png'),
-                              cityCard(
-                                  context, "Tura", 'assets/images/tura.png'),
-                              cityCard(
-                                  context, "Vizag", 'assets/images/vizag.png'),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width *
-                                    0.7, // Set width relative to screen size
-                                height: 500, // Set height as needed
-                                padding: EdgeInsets.all(
-                                  screenWidth * .01,
-                                ),
-                                child: MyWelcomePopupList(
-                                  title: 'Available Locations',
-                                  technologies: availablelocations,
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Text(
-                        "and many more",
-                        style: TextStyle(
-                          color: Color(0xff049304),
+                  ),
+                  Image.asset('assets/images/Vector1.png'),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      int crossAxisCount;
+                      if (constraints.maxWidth < 800) {
+                        crossAxisCount = 3; // 3 columns for small screens
+                      } else if (constraints.maxWidth < 1000) {
+                        crossAxisCount = 4; // 4 columns for medium screens
+                      } else {
+                        crossAxisCount = 7; // 7 columns for large screens
+                      }
+                      return Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * .05),
+                        child: GridView.count(
+                          crossAxisCount: crossAxisCount,
+                          crossAxisSpacing: 2,
+                          mainAxisSpacing: 2,
+                          shrinkWrap: true,
+                          children: [
+                            cityCard(context, "Bangalore",
+                                'assets/images/banglore.png'),
+                            cityCard(context, "Bhubaneswar",
+                                'assets/images/bhubhaneshwar.png'),
+                            cityCard(context, "Chennai",
+                                'assets/images/chennai.png'),
+                            cityCard(
+                                context, "Delhi", 'assets/images/delhi.png'),
+                            cityCard(context, "Gangtok",
+                                'assets/images/gangtok.png'),
+                            cityCard(context, "Guwahati",
+                                'assets/images/guwahati.png'),
+                            cityCard(context, "Hyderabad",
+                                'assets/images/hyderabad.png'),
+                            cityCard(context, "Jaipur",
+                                'assets/images/jaipur.png'),
+                            cityCard(context, "Kolkata",
+                                'assets/images/kolkata.png'),
+                            cityCard(context, "Lucknow",
+                                'assets/images/lucknow.png'),
+                            cityCard(context, "Mohali",
+                                'assets/images/mohali.png'),
+                            cityCard(context, "Mumbai",
+                                'assets/images/mumbai.png'),
+                            cityCard(
+                                context, "Noida", 'assets/images/noida.png'),
+                            cityCard(
+                                context, "Patna", 'assets/images/patna.png'),
+                            cityCard(
+                                context, "Pune", 'assets/images/pune.png'),
+                            cityCard(context, "Shillong",
+                                'assets/images/shillong.png'),
+                            cityCard(context, "Shimla",
+                                'assets/images/shimla.png'),
+                            cityCard(context, "Srinagar",
+                                'assets/images/Srinagar.png'),
+                            cityCard(context, "Thiruvananthapuram",
+                                'assets/images/thiruvananthapuram.png'),
+                            cityCard(
+                                context, "Tura", 'assets/images/tura.png'),
+                            cityCard(
+                                context, "Vizag", 'assets/images/vizag.png'),
+                          ],
                         ),
+                      );
+                    },
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width *
+                                  0.7, // Set width relative to screen size
+                              height: 500, // Set height as needed
+                              padding: EdgeInsets.all(
+                                screenWidth * .01,
+                              ),
+                              child: MyWelcomePopupList(
+                                title: 'Available Locations',
+                                technologies: availablelocations,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text(
+                      "and many more",
+                      style: TextStyle(
+                        color: Color(0xff049304),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
             Padding(

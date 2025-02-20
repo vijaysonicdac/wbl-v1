@@ -17,7 +17,7 @@ import 'package:wbl/Pages/CMS%20Pages/CMS%20Portal/Site%20Settings/report_update
 import 'package:wbl/Pages/CMS%20Pages/CMS%20Portal/Opportunity/resume.dart';
 import 'package:wbl/Pages/CMS%20Pages/CMS%20Portal/Opportunity/testimonials.dart';
 import 'package:wbl/Pages/Login%20Page/Enrollment%20Form/Admin%20Enrollment%20Form/participating_institution_registration.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
+import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/new_loginpage_format.dart';
 
 class CmsDrawer extends StatefulWidget {
   CmsDrawer({
@@ -90,9 +90,7 @@ class _CmsDrawerState extends State<CmsDrawer> {
   };
   @override
   Widget build(BuildContext context) {
-    LoginPageFormat.bodyWidget = widget.bodyWidget;
-    LoginPageFormat.selectedButtonName = widget.selectedButtonName;
-    return LoginPageFormat(
+    return NewLoginpageFormat(
       menuItems: menuItems,
       user: user,
     );

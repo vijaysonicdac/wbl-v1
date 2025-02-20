@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
 
 class StipendPage extends StatefulWidget {
   const StipendPage({super.key});
@@ -11,42 +12,46 @@ TextEditingController searchController = TextEditingController();
 
 class _StipendPageState extends State<StipendPage> {
   String searchQuery = '';
-  List<Map<String, dynamic>> filteredCandidate = [];
-  final List<Map<String, dynamic>> candidateData = [
-    {
-      'AICTE ID': 'STU25412SSSS',
-      'AMOUNT': '10000',
-      'ABSENT DAYS': "10",
-      'ACTION': 'AA',
-    },
-    {
-      'AICTE ID': 'STU25412S',
-      'AMOUNT': '9000',
-      'ABSENT DAYS': "11  ",
-      'ACTION': 'AA',
-    },
-    {
-      'AICTE ID': 'STU2569dd',
-      'AMOUNT': '5000',
-      'ABSENT DAYS': "8",
-      'ACTION': '3',
-    },
-  ];
+
+  List<Map<String, dynamic>> candidates = [];
+  List<Map<String, dynamic>> filterCandidate = [];
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
-    filteredCandidate = candidateData;
+    getCandidateStipend();
+  }
+
+  Future<void> getCandidateStipend() async {
+    try {
+      Map<String, dynamic> data = await getStipendId();
+
+      setState(() {
+        candidates = [data];
+        filterCandidate = candidates;
+        isLoading = false;
+      });
+    } catch (e) {
+      print("Error Fetching Stipend Data: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size.width;
+
     return Scaffold(
+      appBar: AppBar(title: Text('Stipend Page')),
       body: SingleChildScrollView(
         child: Card(
           color: Colors.white,
           child: Column(
             children: [
+              // Search Bar
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
@@ -73,55 +78,78 @@ class _StipendPageState extends State<StipendPage> {
                   ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                  width: screenSize,
-                  child: Expanded(
-                    child: DataTable(
-                        headingRowColor: const WidgetStatePropertyAll(
-                            Color.fromARGB(255, 216, 244, 218)),
-                        columns: const [
-                          DataColumn(
+
+              // Loading Indicator
+              isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : const SizedBox(),
+
+              // Data Table
+              const SizedBox(height: 20),
+              isLoading
+                  ? const SizedBox()
+                  : SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: SizedBox(
+                        width: screenSize,
+                        child: DataTable(
+                          headingRowColor: WidgetStateProperty.all(
+                              Color.fromARGB(255, 216, 244, 218)),
+                          columns: const [
+                            DataColumn(
                               label: Text(
-                            'AICTE ID',
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          )),
-                          DataColumn(
-                              label: Text('AMOUNT',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text(
-                            'ABSENT DAYS',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
+                                'AICTE ID',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
                             ),
-                          )),
-                          DataColumn(
-                              label: Text('ACTION',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
-                        ],
-                        rows: filteredCandidate
-                            .map((candidate) => DataRow(cells: [
-                                  DataCell(
-                                      Text(candidate['AICTE ID'].toString())),
-                                  DataCell(
-                                      Text(candidate['AMOUNT'].toString())),
+                            DataColumn(
+                              label: Text(
+                                'AMOUNT',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'ABSENT DAYS',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'ACTION',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                          rows: filterCandidate
+                              .map(
+                                (candidate) => DataRow(cells: [
                                   DataCell(Text(
-                                      candidate['ABSENT DAYS'].toString())),
+                                      candidate['aicteId']?.toString() ??
+                                          "NA")),
+                                  DataCell(Text(
+                                      candidate['amount']?.toString() ?? "NA")),
+                                  DataCell(Text(
+                                      candidate['absentDays']?.toString() ??
+                                          "NA")),
                                   DataCell(
-                                      Text(candidate['ACTION'].toString())),
-                                ]))
-                            .toList()),
-                  ),
-                ),
-              ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.delete, color: Colors.red),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ),
             ],
           ),
         ),
@@ -132,23 +160,23 @@ class _StipendPageState extends State<StipendPage> {
   void _filteredCandidateSearch() {
     setState(() {
       if (searchQuery.isEmpty) {
-        filteredCandidate = candidateData;
+        filterCandidate = candidates;
       } else {
-        filteredCandidate = candidateData
+        filterCandidate = candidates
             .where((candidate) =>
-                candidate['AICTE ID']
+                candidate['aicteId']
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate['AMOUNT']
+                candidate['amount']
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate['ABSENT DAYS']
+                candidate['absentDays']
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate['ACTION']
+                candidate['action']
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()))

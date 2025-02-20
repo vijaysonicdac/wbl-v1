@@ -7,7 +7,6 @@ import 'package:wbl/Pages/Candidate%20Pages/Resume/add_resume_page.dart';
 import 'package:wbl/Pages/Candidate%20Pages/Stipend/stipend.dart';
 import 'package:wbl/Pages/Login%20Page/Enrollment%20Form/Candidate%20Enrollment%20Form/candidate_enrollment_form.dart';
 import 'package:wbl/Pages/Login%20Page/login_page.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
 import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/new_loginpage_format.dart';
 
 // ignore: must_be_immutable
@@ -63,8 +62,6 @@ class _CandidateProfileState extends State<TestPage> {
 
   @override
   Widget build(BuildContext context) {
-    LoginPageFormat.bodyWidget = widget.bodyWidget;
-    LoginPageFormat.selectedButtonName = widget.selectedButtonName;
     return NewLoginpageFormat(
       user: user,
       menuItems: menuItems,

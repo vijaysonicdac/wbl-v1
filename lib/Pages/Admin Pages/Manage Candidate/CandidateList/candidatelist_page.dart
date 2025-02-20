@@ -5,7 +5,6 @@ import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candidd
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_View_Leave/add_viewleave.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_View_Stipend/add_view_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
 
 // ignore: must_be_immutable
 class CandidateList extends StatefulWidget {
@@ -273,9 +272,8 @@ class _CandidateListState extends State<CandidateList> {
   // ignore: non_constant_identifier_names
   Widget DataTableWidget(List<Map<String, dynamic>> candidates) {
     return ConstrainedBox(
-      constraints: BoxConstraints(
-          minWidth:
-              MediaQuery.of(context).size.width - LoginPageFormat.sidebarWidth),
+      constraints:
+          BoxConstraints(minWidth: MediaQuery.of(context).size.width - 200),
       child: DataTable(
         headingRowColor:
             const WidgetStatePropertyAll(Color.fromARGB(255, 224, 230, 224)),

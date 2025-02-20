@@ -1,17 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/Delete%20Api%20functions/delete_api_function.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
 import 'package:wbl/Pages/Admin%20Pages/Vacancy/Vacancy_Add_icon/add_vacancy.dart';
 import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
-import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/login_page_format.dart';
 
-class Vacancyclass extends StatefulWidget {
-  const Vacancyclass({
+class VacancyClass extends StatefulWidget {
+  const VacancyClass({
     super.key,
   });
+
   @override
-  State<Vacancyclass> createState() => VacancyclassState();
+  State<VacancyClass> createState() => VacancyClassState();
 }
 
-class VacancyclassState extends State<Vacancyclass> {
+class VacancyClassState extends State<VacancyClass> {
   String selectedCohort = 'select';
   String selectedLevel = 'select';
   String searchQuery = '';
@@ -22,37 +25,36 @@ class VacancyclassState extends State<Vacancyclass> {
     'Cohort 3'
   ];
   final List<String> levelList = ['select', 'Level 1', 'Level 2', 'Level 3'];
-  final List<Map<String, dynamic>> candidates = [
-    {
-      "VACANCY": '20',
-      "LEVEL": "L2",
-      "START DATE": '	1 Jan. 2023',
-      "END DATE": "	30 Jun. 2023",
-      "COHORT": "2",
-    },
-    {
-      "VACANCY": '15',
-      "LEVEL": "L2",
-      "START DATE": '	1 Jan. 2023',
-      "END DATE": "	30 Jun. 2023",
-      "COHORT": "1",
-    },
-    {
-      "VACANCY": '10',
-      "LEVEL": "L2",
-      "START DATE": '	1 Jan. 2023',
-      "END DATE": "	30 Jun. 2023",
-      "COHORT": "3",
-    },
-  ];
-
-  List<Map<String, dynamic>> filtercandidate = [];
+  List<Map<String, dynamic>> filteredVacancy = [];
+  List<Map<String, dynamic>> vacancyData = [];
+  bool isLoading = true;
   String? _selectvacancy;
 
   @override
   void initState() {
     super.initState();
-    filtercandidate = candidates;
+    fetchVacancyData();
+  }
+
+  Future<void> fetchVacancyData() async {
+    try {
+      List<dynamic> data = await getVacancyData();
+      if (kDebugMode) {
+        print("Fetched Data: $data");
+      }
+      setState(() {
+        vacancyData = List<Map<String, dynamic>>.from(data);
+        filteredVacancy = vacancyData; // Initially show all data
+        isLoading = false;
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error fetching stipend data: $e");
+      }
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -73,16 +75,23 @@ class VacancyclassState extends State<Vacancyclass> {
                 buildAddButton(),
               ],
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                      minWidth: screenWidth - LoginPageFormat.sidebarWidth),
-                  child: buildDataTable(),
-                ),
-              ),
-            ),
+            isLoading
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Expanded(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.vertical,
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: ConstrainedBox(
+                          constraints:
+                              BoxConstraints(minWidth: screenWidth - 200),
+                          child: buildDataTable(),
+                        ),
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -149,17 +158,17 @@ class VacancyclassState extends State<Vacancyclass> {
       columns:
           columns.map((title) => DataColumn(label: mylabel(title))).toList(),
       rows:
-          filtercandidate.map((candidate) => buildDataRow(candidate)).toList(),
+          filteredVacancy.map((candidate) => buildDataRow(candidate)).toList(),
     );
   }
 
   DataRow buildDataRow(Map<String, dynamic> candidate) => DataRow(
         cells: [
-          buildDataCell(candidate['VACANCY']),
-          buildDataCell(candidate['LEVEL']),
-          buildDataCell(candidate['START DATE']),
-          buildDataCell(candidate['END DATE']),
-          buildDataCell(candidate['COHORT']),
+          buildDataCell(candidate['numbersOfVacancy']),
+          buildDataCell(candidate['level']),
+          buildDataCell(candidate['startDate']),
+          buildDataCell(candidate['endDate']),
+          buildDataCell(candidate['cohortId']),
           buildActionCell(candidate),
         ],
       );
@@ -167,27 +176,27 @@ class VacancyclassState extends State<Vacancyclass> {
   searchlist() {
     setState(() {
       if (searchQuery.isEmpty) {
-        filtercandidate = candidates;
+        filteredVacancy = vacancyData;
       } else {
-        filtercandidate = candidates
+        filteredVacancy = vacancyData
             .where((candidate) =>
-                candidate["VACANCY"]
+                candidate["numbersOfVacancy"]
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate["LEVEL"]
+                candidate["level"]
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate["START DATE"]
+                candidate["startDate"]
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate["END DATE"]
+                candidate["endDate"]
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
-                candidate["COHORT"]
+                candidate["cohortId"]
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()))
@@ -216,24 +225,53 @@ class VacancyclassState extends State<Vacancyclass> {
       );
 
   void _showDeleteConfirmationDialog(
-      BuildContext context, Map<String, dynamic> candidate) {
+      BuildContext context, Map<String, dynamic> vacancy) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Do you want to delete stipend?',
-              style: TextStyle(fontWeight: FontWeight.bold)),
+          title: const Text(
+            'Do you want to delete this vacancy?',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           content: Text(
-              "You wo'nt be able to revert this ${candidate["CANDIDATE NAME"]}?"),
+              "You won't be able to revert this vacancy (${vacancy["numbersOfVacancy"]})?"),
           actions: <Widget>[
             TextButton(
               style: const ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(Colors.blueAccent)),
-              onPressed: () {
-                setState(() {
-                  candidates.remove(candidate);
-                });
-                Navigator.of(context).pop();
+              onPressed: () async {
+                try {
+                  await deleteVacancy(context, vacancy['id'].toString());
+                  setState(() {
+                    vacancyData.remove(vacancy);
+                    filteredVacancy = vacancyData;
+                  });
+                  Navigator.of(context).pop;
+
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   SnackBar(
+                  //     content: Text(
+                  //         'Vacancy with ID ${vacancy["id"]} deleted successfully!'),
+                  //     backgroundColor: Colors.green,
+                  //   ),
+                  // );
+
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('ID ${vacancy["id"]} is deleted.'),
+                      backgroundColor: Colors.blue,
+                    ),
+                  );
+                } catch (error) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Failed to delete vacancy.'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
               },
               child: const Text(
                 'Yes, Delete it',
@@ -271,10 +309,7 @@ class VacancyclassState extends State<Vacancyclass> {
             child: DropdownButtonFormField<String>(
               value: selecteditem,
               items: items.map((String item) {
-                return DropdownMenuItem<String>(
-                  value: item,
-                  child: Text(item),
-                );
+                return DropdownMenuItem<String>(value: item, child: Text(item));
               }).toList(),
               onChanged: (String? newValue) {
                 setState(() {

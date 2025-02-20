@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../Pages/Welcome Page/welcome_page.dart';
@@ -102,7 +103,10 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
               color: const Color.fromARGB(255, 233, 246, 255),
               child: Column(
                 children: [
-                  if (screenWidth <= smallScreenWidthSize) mySubMenu(),
+                  screenWidth <= smallScreenWidthSize
+                      ? mySubMenu()
+                      : Text(
+                          menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]),
                   Expanded(child: getbodyWidget())
                 ],
               ),
@@ -117,7 +121,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
     return Row(
       children: [
         SizedBox(
-          width: isDrawerOpen ? 194 : 54,
+          width: isDrawerOpen ? 204 : 54,
           child: Row(
             mainAxisAlignment: isDrawerOpen
                 ? MainAxisAlignment.center
@@ -242,13 +246,17 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
 
     Map<String, dynamic> titleSubtileValue =
         widget.menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['title'];
-    print('v $titleSubtileValue');
+    if (kDebugMode) {
+      print('v $titleSubtileValue');
+    }
     if (titleSubtileValue[
             menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]] ==
         null) {
       titleSubtileValue = widget
           .menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['subtitle'];
-      print('v $titleSubtileValue');
+      if (kDebugMode) {
+        print('v $titleSubtileValue');
+      }
     }
     return bodyWidget ??
         widget.menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['title']
@@ -259,7 +267,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
 
   Widget myDrawer() {
     return SizedBox(
-      width: isDrawerOpen ? 210 : 70,
+      width: isDrawerOpen ? 220 : 70,
       child: Padding(
         padding: const EdgeInsets.all(5.0),
         child: Column(
@@ -269,7 +277,12 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                 alignment: WrapAlignment.center,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  myUserImage(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      myUserImage(),
+                    ],
+                  ),
                   Text(
                     '${widget.user!['firstName']} ${widget.user!['lastName']} ',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
@@ -368,7 +381,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
       initials = widget.user!['firstName']![0];
     }
     return CircleAvatar(
-      radius: 40,
+      radius: 50,
       backgroundImage: widget.user!['profileImage'] != null
           ? NetworkImage(widget.user!['profileImage']!)
           : null,
@@ -389,6 +402,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
       padding: const EdgeInsets.all(8.0),
       child: Text(
         title,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontWeight: isSelectedCondition ? FontWeight.bold : FontWeight.normal,
         ),

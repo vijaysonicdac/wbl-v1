@@ -12,6 +12,10 @@ class CandidateApplicationState extends State<CandidateApplication> {
 
   List<Map<String, dynamic>> filteredCandidates = [];
 
+    ScrollController horizontal = ScrollController();
+  ScrollController vertical = ScrollController();
+
+
   final List<Map<String, dynamic>> adData = [
     {
       "Sr_No": '1',
@@ -122,8 +126,9 @@ class CandidateApplicationState extends State<CandidateApplication> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
+              
+              Expanded(
+                child: buildVerticalScrollbar(vertical, child: buildHorizontalScrollbar(horizontal, child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: DataTable(
                       border: TableBorder.all(
@@ -178,6 +183,8 @@ class CandidateApplicationState extends State<CandidateApplication> {
                               ))
                           .toList()),
                 ),
+                )
+                ),
               )
             ],
           ),
@@ -185,6 +192,34 @@ class CandidateApplicationState extends State<CandidateApplication> {
       ),
     );
   }
+  Widget buildVerticalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildHorizontalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
 
   void searchwidget() {
     setState(() {

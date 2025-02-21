@@ -11,6 +11,10 @@ class PlacementClass extends StatefulWidget {
 class PlacementClassState extends State<PlacementClass> {
   String searchQuery = '';
   List<Map<String, dynamic>> filteredCandidates = [];
+
+    ScrollController horizontal = ScrollController();
+  ScrollController vertical = ScrollController();
+
   final List<Map<String, dynamic>> adData = [
     {
       "R_ID": 1,
@@ -127,8 +131,8 @@ class PlacementClassState extends State<PlacementClass> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
+              Expanded(
+                child: buildVerticalScrollbar(vertical, child: buildHorizontalScrollbar(horizontal, child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -194,11 +198,39 @@ class PlacementClassState extends State<PlacementClass> {
                       // .toList()
                     ),
                   ),
-                ),
+                ),)),
               )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+   Widget buildVerticalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildHorizontalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        child: child,
       ),
     );
   }

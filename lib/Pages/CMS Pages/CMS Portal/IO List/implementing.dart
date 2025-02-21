@@ -11,6 +11,10 @@ class ImplementingClass extends StatefulWidget {
 class ImplementingClassState extends State<ImplementingClass> {
   String searchQuery = '';
   List<Map<String, dynamic>> filteredCandidates = [];
+
+     ScrollController horizontal = ScrollController();
+  ScrollController vertical = ScrollController();
+
   final List<Map<String, dynamic>> adData = [
     {
       "IO_ID": 1,
@@ -121,8 +125,8 @@ class ImplementingClassState extends State<ImplementingClass> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
+              Expanded(
+                child: buildVerticalScrollbar(vertical, child: buildHorizontalScrollbar(horizontal, child:  Padding(
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -134,11 +138,40 @@ class ImplementingClassState extends State<ImplementingClass> {
                           .toList(),
                     ),
                   ),
+                ),)
                 ),
               )
             ],
           ),
         ),
+      ),
+    );
+  }
+
+      Widget buildVerticalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildHorizontalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        child: child,
       ),
     );
   }

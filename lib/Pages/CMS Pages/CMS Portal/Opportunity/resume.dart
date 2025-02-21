@@ -13,6 +13,10 @@ class Resume_Class extends StatefulWidget {
 class Resume_ClassState extends State<Resume_Class> {
   String searchQuery = '';
   List<Map<String, dynamic>> filteredCandidates = [];
+
+      ScrollController horizontal = ScrollController();
+  ScrollController vertical = ScrollController();
+
   // ignore: non_constant_identifier_names
   final List<Map<String, dynamic>> ad_Data = [
     {
@@ -109,8 +113,8 @@ class Resume_ClassState extends State<Resume_Class> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
+              Expanded(
+                child: buildVerticalScrollbar(vertical, child: buildHorizontalScrollbar(horizontal, child: Padding(
                   padding: const EdgeInsets.all(8),
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width,
@@ -123,6 +127,8 @@ class Resume_ClassState extends State<Resume_Class> {
                     ),
                   ),
                 ),
+                )
+                ),
               )
             ],
           ),
@@ -130,6 +136,35 @@ class Resume_ClassState extends State<Resume_Class> {
       ),
     );
   }
+
+   Widget buildVerticalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildHorizontalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
 
   List<DataColumn> columns() {
     return [

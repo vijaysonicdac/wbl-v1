@@ -5,12 +5,17 @@ import '../../Pages/Welcome Page/welcome_page.dart';
 import '../../Reusable Functions/reusable_function.dart';
 
 class NewLoginpageFormat extends StatefulWidget {
-  const NewLoginpageFormat(
-      {super.key, required this.menuItems, required this.user});
+  NewLoginpageFormat(
+      {super.key,
+      required this.menuItems,
+      required this.user,
+      this.selectedButtonName});
 
   final List<Map<String, dynamic>> menuItems;
   final Map<String, dynamic>? user;
   static Widget? bodyWidget;
+  String? selectedButtonName;
+
   static int? currentMenuIndex;
   static int? currentSubmenuIndex;
 
@@ -53,24 +58,25 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-        children: [
-          screenWidth >= smallScreenWidthSize
-              ? myDrawerButton()
-              : myImage("assets/images/wblLogo.png"),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                myImage("assets/images/miety.png"),
-                myImage('assets/images/G20Logo.png'),
-                myImage("assets/images/cdacLogo.png"),
-              ],
+        title: Row(
+          children: [
+            screenWidth >= smallScreenWidthSize
+                ? myDrawerButton()
+                : myImage("assets/images/wblLogo.png"),
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  myImage("assets/images/miety.png"),
+                  myImage('assets/images/G20Logo.png'),
+                  myImage("assets/images/cdacLogo.png"),
+                ],
+              ),
             ),
-          ),
-          mySettingButton()
-        ],
-      )),
+            mySettingButton()
+          ],
+        ),
+      ),
       bottomNavigationBar: screenWidth <= smallScreenWidthSize
           ? BottomNavigationBar(
               selectedItemColor: Colors.black,
@@ -100,14 +106,30 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
           if (screenWidth >= smallScreenWidthSize) myDrawer(),
           Expanded(
             child: ColoredBox(
-              color: const Color.fromARGB(255, 233, 246, 255),
+              color: const Color.fromARGB(255, 233, 230, 230),
               child: Column(
                 children: [
                   screenWidth <= smallScreenWidthSize
                       ? mySubMenu()
-                      : Text(
-                          menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]),
-                  Expanded(child: getbodyWidget())
+                      : rowTOColumn([
+                          Text(
+                            getFormattedMenuPath(),
+                            style: const TextStyle(
+                                fontSize: 15, fontWeight: FontWeight.bold),
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                '${widget.user?['center'] ?? ""} (${widget.user?['center type'] ?? ""})',
+                                style: const TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ]),
+                  Expanded(
+                    child: getbodyWidget(),
+                  ),
                 ],
               ),
             ),
@@ -115,6 +137,31 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
         ],
       ),
     );
+  }
+
+  Widget rowTOColumn(List<Widget> children) {
+    return MediaQuery.of(context).size.width <= 600
+        ? Wrap(children: children)
+        : Row(children: children);
+  }
+
+  String getFormattedMenuPath() {
+    String menu = (NewLoginpageFormat.currentMenuIndex != null)
+        ? widget
+            .menuItems[NewLoginpageFormat.currentMenuIndex!]['title'].keys.first
+        : "";
+
+    String submenu = (NewLoginpageFormat.currentSubmenuIndex != null &&
+            subMenuItems.isNotEmpty &&
+            NewLoginpageFormat.currentSubmenuIndex! < subMenuItems.length)
+        ? " > ${subMenuItems[NewLoginpageFormat.currentSubmenuIndex!]}"
+        : "";
+
+    String button = (widget.selectedButtonName?.isNotEmpty ?? false)
+        ? " > ${widget.selectedButtonName}"
+        : "";
+
+    return "$menu$submenu$button";
   }
 
   Widget myDrawerButton() {
@@ -191,9 +238,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
               onTap: () {
                 NewLoginpageFormat.bodyWidget = widget.user!['profile'];
                 MyFun.navigatToPagewithoutBack(
-                    context,
-                    NewLoginpageFormat(
-                        menuItems: widget.menuItems, user: widget.user));
+                    context, widget.user!['profile']);
               },
             ),
             PopupMenuItem(
@@ -215,8 +260,10 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
 
   Widget mySubMenu() {
     return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
           for (int i = 0; i <= subMenuItems.length - 1; i++)
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -237,7 +284,9 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                 ),
               ),
             )
-        ]));
+        ],
+      ),
+    );
   }
 
   Widget getbodyWidget() {
@@ -343,28 +392,28 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                   if (j == NewLoginpageFormat.currentMenuIndex && isDrawerOpen)
                     for (int k = 0; k <= subMenuItems.length - 1; k++)
                       TextButton(
-                          onPressed: () {
-                            setState(() {
-                              NewLoginpageFormat.currentSubmenuIndex = k;
-                            });
-                          },
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width:
-                                    NewLoginpageFormat.currentSubmenuIndex == k
-                                        ? 18
-                                        : 30,
+                        onPressed: () {
+                          setState(() {
+                            NewLoginpageFormat.currentSubmenuIndex = k;
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: NewLoginpageFormat.currentSubmenuIndex == k
+                                  ? 18
+                                  : 30,
+                            ),
+                            if (NewLoginpageFormat.currentSubmenuIndex == k)
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                size: 12,
                               ),
-                              if (NewLoginpageFormat.currentSubmenuIndex == k)
-                                Icon(
-                                  Icons.arrow_forward_ios,
-                                  size: 12,
-                                ),
-                              myMenuTitle(subMenuItems[k],
-                                  NewLoginpageFormat.currentSubmenuIndex == k),
-                            ],
-                          ))
+                            myMenuTitle(subMenuItems[k],
+                                NewLoginpageFormat.currentSubmenuIndex == k),
+                          ],
+                        ),
+                      ),
                 ],
               ),
           ],

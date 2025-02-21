@@ -88,6 +88,111 @@ class _CandidateListState extends State<CandidateList> {
       "Email": "vaidik.goyal@example.com",
       "Mobile": "+0987654321",
       "Status": "Inactive"
+    },{
+      "ID": 50,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 4,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
+    },
+    {
+      "ID": 5,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 10,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
+    },{
+      "ID": 50,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 4,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
+    },
+    {
+      "ID": 5,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 10,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
+    },{
+      "ID": 50,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 4,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
+    },
+    {
+      "ID": 5,
+      "DOB": "21-06-2023",
+      "Year": 2023,
+      "Name": "Rajesh Kumar",
+      "Email": "rajesh.kumar@example.com",
+      "Mobile": "+1234567890",
+      "Status": "Active"
+    },
+    {
+      "ID": 10,
+      "DOB": "01-05-2023",
+      "Year": 2023,
+      "Name": "Vaidik Goyal",
+      "Email": "vaidik.goyal@example.com",
+      "Mobile": "+0987654321",
+      "Status": "Inactive"
     },
   ];
 

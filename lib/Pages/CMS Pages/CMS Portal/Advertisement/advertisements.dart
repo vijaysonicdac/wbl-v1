@@ -12,6 +12,9 @@ class Advertisement extends StatefulWidget {
 class _AdvertisementState extends State<Advertisement> {
   String searchQuery = '';
   List<Map<String, dynamic>> filteredCandidates = [];
+    ScrollController horizontal = ScrollController();
+  ScrollController vertical = ScrollController();
+
   final List<Map<String, dynamic>> ad_Data = [
     {
       "Adv_ID": 1,
@@ -183,8 +186,8 @@ class _AdvertisementState extends State<Advertisement> {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                child: Padding(
+              Expanded(
+                child: buildVerticalScrollbar(vertical, child: buildHorizontalScrollbar(horizontal, child:Padding(
                   padding: const EdgeInsets.all(8),
                   child: DataTable(
                       border: TableBorder.all(
@@ -253,10 +256,39 @@ class _AdvertisementState extends State<Advertisement> {
                               ))
                           .toList()),
                 ),
+                )
               )
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+    Widget buildVerticalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        controller: controller,
+        child: child,
+      ),
+    );
+  }
+
+  Widget buildHorizontalScrollbar(ScrollController controller,
+      {required Widget child}) {
+    return Scrollbar(
+      thickness: 10,
+      thumbVisibility: true,
+      controller: controller,
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        controller: controller,
+        child: child,
       ),
     );
   }

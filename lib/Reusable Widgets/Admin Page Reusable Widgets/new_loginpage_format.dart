@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -105,33 +107,30 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
         children: [
           if (screenWidth >= smallScreenWidthSize) myDrawer(),
           Expanded(
-            child: ColoredBox(
-              color: const Color.fromARGB(255, 233, 230, 230),
-              child: Column(
-                children: [
-                  screenWidth <= smallScreenWidthSize
-                      ? mySubMenu()
-                      : rowTOColumn([
-                          Text(
-                            getFormattedMenuPath(),
-                            style: const TextStyle(
-                                fontSize: 15, fontWeight: FontWeight.bold),
-                          ),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                '${widget.user?['center'] ?? ""} (${widget.user?['center type'] ?? ""})',
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
+            child: Column(
+              children: [
+                screenWidth <= smallScreenWidthSize
+                    ? mySubMenu()
+                    : rowTOColumn([
+                        Text(
+                          getFormattedMenuPath(),
+                          style: const TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.bold),
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              '${widget.user?['center'] ?? ""} (${widget.user?['center type'] ?? ""})',
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
                             ),
                           ),
-                        ]),
-                  Expanded(
-                    child: getbodyWidget(),
-                  ),
-                ],
-              ),
+                        ),
+                      ]),
+                Expanded(
+                  child: getbodyWidget(),
+                ),
+              ],
             ),
           ),
         ],
@@ -264,7 +263,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          for (int i = 0; i <= subMenuItems.length - 1; i++)
+          for (int i = 0; i < subMenuItems.length; i++)
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
@@ -275,15 +274,27 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: NewLoginpageFormat.currentSubmenuIndex == i
-                      ? Colors.indigo
-                      : Colors.grey, // This sets the button color to blue
+                      ? Colors.grey // Selected button background
+                      : Colors.transparent, // Default background
+                  shape: RoundedRectangleBorder(
+                    borderRadius: NewLoginpageFormat.currentSubmenuIndex == i
+                        ? BorderRadius.circular(10) // Rounded selected
+                        : BorderRadius.zero, // Square not selected
+                  ),
+                  elevation:
+                      NewLoginpageFormat.currentSubmenuIndex == i ? 2 : 0,
                 ),
                 child: Text(
                   subMenuItems[i],
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: NewLoginpageFormat.currentSubmenuIndex == i
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
                 ),
               ),
-            )
+            ),
         ],
       ),
     );
@@ -356,42 +367,63 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                   Padding(
                     padding: const EdgeInsets.all(2.0),
                     child: TextButton(
-                        style: TextButton.styleFrom(
-                            backgroundColor:
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            NewLoginpageFormat.currentMenuIndex == j
+                                ? Colors.grey[200]
+                                : Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          if (menuItems[j] == 'Logout') {
+                            MyFun.navigatToPagewithoutBack(
+                                context, WelcomePage());
+                          }
+                          NewLoginpageFormat.currentMenuIndex = j;
+                          getSubMenuItems();
+                        });
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            widget.menuItems[j]['icon'],
+                            size: 28,
+                            color: NewLoginpageFormat.currentMenuIndex == j
+                                ? Colors.black
+                                : Colors.grey,
+                          ),
+                          if (isDrawerOpen)
+                            myMenuTitle(menuItems[j],
+                                NewLoginpageFormat.currentMenuIndex == j),
+                          if (isDrawerOpen) myExpended(),
+                          if (isDrawerOpen)
+                            if (widget.menuItems[j]['subtitle'] != null)
+                              Icon(
                                 NewLoginpageFormat.currentMenuIndex == j
-                                    ? Colors.indigo[50]
-                                    : Colors.transparent),
-                        onPressed: () {
-                          setState(() {
-                            if (menuItems[j] == 'Logout') {
-                              MyFun.navigatToPagewithoutBack(
-                                  context, WelcomePage());
-                            }
-                            NewLoginpageFormat.currentMenuIndex = j;
-                            getSubMenuItems();
-                          });
-                        },
-                        child: Row(
-                          children: [
-                            Icon(
-                              widget.menuItems[j]['icon'],
-                              size: 28,
-                            ),
-                            if (isDrawerOpen)
-                              myMenuTitle(menuItems[j],
-                                  NewLoginpageFormat.currentMenuIndex == j),
-                            if (isDrawerOpen) myExpended(),
-                            if (isDrawerOpen)
-                              if (widget.menuItems[j]['subtitle'] != null)
-                                Icon(NewLoginpageFormat.currentMenuIndex == j
                                     ? Icons.remove
-                                    : Icons.add)
-                          ],
-                        )),
+                                    : Icons.add,
+                                color: NewLoginpageFormat.currentMenuIndex == j
+                                    ? Colors.black
+                                    : Colors.grey,
+                              )
+                        ],
+                      ),
+                    ),
                   ),
                   if (j == NewLoginpageFormat.currentMenuIndex && isDrawerOpen)
                     for (int k = 0; k <= subMenuItems.length - 1; k++)
                       TextButton(
+                        style: TextButton.styleFrom(
+                          backgroundColor:
+                              NewLoginpageFormat.currentSubmenuIndex == k
+                                  ? Colors.grey[300]
+                                  : Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                        ),
                         onPressed: () {
                           setState(() {
                             NewLoginpageFormat.currentSubmenuIndex = k;
@@ -406,8 +438,12 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                             ),
                             if (NewLoginpageFormat.currentSubmenuIndex == k)
                               Icon(
-                                Icons.arrow_forward_ios,
+                                Icons.arrow_back_ios,
                                 size: 12,
+                                color:
+                                    NewLoginpageFormat.currentSubmenuIndex == k
+                                        ? Colors.black // Selected color
+                                        : Colors.grey, // Default color
                               ),
                             myMenuTitle(subMenuItems[k],
                                 NewLoginpageFormat.currentSubmenuIndex == k),
@@ -448,12 +484,14 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
 
   Widget myMenuTitle(String title, bool isSelectedCondition) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5),
       child: Text(
         title,
-        overflow: TextOverflow.ellipsis,
+        overflow: TextOverflow.fade,
         style: TextStyle(
           fontWeight: isSelectedCondition ? FontWeight.bold : FontWeight.normal,
+          color: isSelectedCondition ? Colors.black : Colors.black87,
+          fontSize: isSelectedCondition ? 14 : 13,
         ),
       ),
     );

@@ -66,121 +66,126 @@ class AssesmentpageState extends State<Assesmentpage> {
   Widget build(BuildContext context) {
     // double screenWidth = MediaQuery.of(context).size.width;
     // double screenHeight = MediaQuery.of(context).size.height;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 8.0, // Space between dropdowns
-          runSpacing: 8.0, // Space between rows of dropdowns
-          alignment: WrapAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: SizedBox(
-                width: 200,
-                child: TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Search',
-                    hintText: 'Search column',
-                    border: OutlineInputBorder(),
+    return Container(
+      // color: Colors.grey[200],
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            spacing: 8.0, // Space between dropdowns
+            runSpacing: 8.0, // Space between rows of dropdowns
+            alignment: WrapAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: SizedBox(
+                  width: 200,
+                  child: TextField(
+                    decoration: const InputDecoration(
+                      labelText: 'Search',
+                      hintText: 'Search column',
+                      border: OutlineInputBorder(),
+                    ),
+                    onChanged: (value) {
+                      setState(() {
+                        searchQuery = value;
+                        searchlist();
+                      });
+                    },
                   ),
-                  onChanged: (value) {
-                    setState(() {
-                      searchQuery = value;
-                      searchlist();
-                    });
-                  },
                 ),
               ),
-            ),
 
-            // Dropdown for Current Cohort
-            mysearchbutton(
-              selectedState,
-              stateList,
-              "State ",
-            ),
-            mysearchbutton(
-              selectedCohort,
-              cohortList,
-              "Cohort",
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final double availableWidth = constraints.maxWidth;
-              final double availableHeight = constraints.maxHeight;
-              return Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
+              // Dropdown for Current Cohort
+              mysearchbutton(
+                selectedState,
+                stateList,
+                "State ",
+              ),
+              mysearchbutton(
+                selectedCohort,
+                cohortList,
+                "Cohort",
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final double availableWidth = constraints.maxWidth;
+                final double availableHeight = constraints.maxHeight;
+                return Expanded(
                   child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: availableWidth, // Make it responsive
-                      ),
-                      child: Card(
-                        child: DataTable(
-                          headingRowColor: const WidgetStatePropertyAll(
-                            Color.fromARGB(255, 224, 230, 224),
-                          ),
-                          columns: [
-                            DataColumn(label: mylabel("LEVEL")),
-                            DataColumn(label: mylabel("ASSESSMENT STATUS")),
-                            DataColumn(label: mylabel("PROMOTED")),
-                            DataColumn(label: mylabel("DATE")),
-                            DataColumn(label: mylabel("DOCUMENT")),
-                          ],
-                          rows: filteredcandidate.map((candidate) {
-                            return DataRow(
-                              cells: [
-                                DataCell(
-                                    mylabel(candidate['lEVEL'].toString())),
-                                DataCell(mylabel(
-                                    candidate['ASSESSMENT STATUS'].toString())),
-                                DataCell(
-                                    mylabel(candidate['PROMOTED'].toString())),
-                                DataCell(mylabel(candidate['DATE'].toString())),
-                                DataCell(
-                                  Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.visibility),
-                                        onPressed: () {
-                                          // View action
-                                        },
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(
-                                          Icons.delete,
-                                          color: Color.fromARGB(
-                                              255, 226, 123, 108),
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: availableWidth, // Make it responsive
+                        ),
+                        child: Card(
+                          child: DataTable(
+                            headingRowColor: const WidgetStatePropertyAll(
+                              Color.fromARGB(255, 224, 230, 224),
+                            ),
+                            columns: [
+                              DataColumn(label: mylabel("LEVEL")),
+                              DataColumn(label: mylabel("ASSESSMENT STATUS")),
+                              DataColumn(label: mylabel("PROMOTED")),
+                              DataColumn(label: mylabel("DATE")),
+                              DataColumn(label: mylabel("DOCUMENT")),
+                            ],
+                            rows: filteredcandidate.map((candidate) {
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                      mylabel(candidate['lEVEL'].toString())),
+                                  DataCell(mylabel(
+                                      candidate['ASSESSMENT STATUS']
+                                          .toString())),
+                                  DataCell(mylabel(
+                                      candidate['PROMOTED'].toString())),
+                                  DataCell(
+                                      mylabel(candidate['DATE'].toString())),
+                                  DataCell(
+                                    Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.visibility),
+                                          onPressed: () {
+                                            // View action
+                                          },
                                         ),
-                                        onPressed: () {
-                                          _showDeleteConfirmationDialog(
-                                              context, candidate);
-                                        },
-                                      ),
-                                    ],
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Color.fromARGB(
+                                                255, 226, 123, 108),
+                                          ),
+                                          onPressed: () {
+                                            _showDeleteConfirmationDialog(
+                                                context, candidate);
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
+                                ],
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

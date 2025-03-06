@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_final_fields, unused_local_variable
+// ignore_for_file: prefer_final_fields, unused_local_variable, non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_Add_Stipend/add_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_Add_assessment/assesment_add_icon.dart';
@@ -88,111 +88,6 @@ class _CandidateListState extends State<CandidateList> {
       "Email": "vaidik.goyal@example.com",
       "Mobile": "+0987654321",
       "Status": "Inactive"
-    },{
-      "ID": 50,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 4,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-    {
-      "ID": 5,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 10,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },{
-      "ID": 50,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 4,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-    {
-      "ID": 5,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 10,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },{
-      "ID": 50,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 4,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-    {
-      "ID": 5,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 10,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
     },
   ];
 
@@ -243,31 +138,127 @@ class _CandidateListState extends State<CandidateList> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          buildSearchWrap(),
-          Expanded(
-            child: buildVerticalScrollbar(
-              vertical,
-              child: buildHorizontalScrollbar(
-                horizontal,
-                child: DataTableWidget(candidates),
-              ),
-            ),
-          ),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 500) {
+          return buildCardView(); // cards small screens
+        } else {
+          return buildTableView(); // table larger screens
+        }
+      },
     );
   }
 
-  Widget buildSearchWrap() {
+// Table larger screens
+  Widget buildTableView() {
+    return Column(
+      children: [
+        SearchWrap(),
+        Expanded(
+          child: VerticalScrollbar(
+            vertical,
+            child: HorizontalScrollbar(
+              horizontal,
+              child: DataTableWidget(candidates),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildCardView() {
+    return Column(
+      children: [
+        SearchWrap(),
+        const SizedBox(height: 10),
+        Expanded(
+          child: Padding(
+            padding: EdgeInsets.all(8.0),
+            child: GridView.builder(
+              itemCount: filteredcandidate.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                // crossAxisCount: MediaQuery.of(context).size.width < 600 ? 2 : 3,
+                crossAxisCount: 2,
+                crossAxisSpacing: 8, // Horizontal space between cards
+                mainAxisSpacing: 8, // Vertical space between rows
+              ),
+              itemBuilder: (context, index) {
+                var candidate = filteredcandidate[index];
+                bool isActive = candidate['Status'].toLowerCase() == "active";
+
+                return Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 4,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Name: ${candidate['Name']}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                "ID: ${candidate['ID']}",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text("Email:",
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          Text(candidate['Email'],
+                              style: TextStyle(color: Colors.grey[700])),
+                          SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Mobile: ${candidate['Mobile']}"),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Text("DOB: ${candidate['DOB']}"),
+                          SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Year: ${candidate['Year']}"),
+                              Text(
+                                "Status: ${candidate['Status']}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: isActive ? Colors.green : Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Divider(),
+                          buildActionButtons(candidate),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget SearchWrap() {
     return Wrap(
       spacing: 8, // Space between dropdowns
       runSpacing: 8, // Space between rows of dropdowns
-      alignment: WrapAlignment.start, // Align to start
+      alignment: WrapAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(4.0),
@@ -288,22 +279,22 @@ class _CandidateListState extends State<CandidateList> {
             ),
           ),
         ),
-        buildDropdown("Select Cohort", selectedCohort, cohortList, (newValue) {
+        Dropdown("Select Cohort", selectedCohort, cohortList, (newValue) {
           setState(() {
             selectedCohort = newValue!;
           });
         }),
-        buildDropdown("State", selectedState, stateList, (newValue) {
+        Dropdown("State", selectedState, stateList, (newValue) {
           setState(() {
             selectedState = newValue!;
           });
         }),
-        buildDropdown("Level", selectedLevel, levelList, (newValue) {
+        Dropdown("Level", selectedLevel, levelList, (newValue) {
           setState(() {
             selectedLevel = newValue!;
           });
         }),
-        buildDropdown("Year", selectedYear, yearList, (newValue) {
+        Dropdown("Year", selectedYear, yearList, (newValue) {
           setState(() {
             selectedYear = newValue!;
           });
@@ -312,7 +303,7 @@ class _CandidateListState extends State<CandidateList> {
     );
   }
 
-  Widget buildDropdown(String label, String selectedValue, List<String> items,
+  Widget Dropdown(String label, String selectedValue, List<String> items,
       ValueChanged<String?> onChanged) {
     return mysearchbutton(
       selectedValue,
@@ -346,7 +337,7 @@ class _CandidateListState extends State<CandidateList> {
     );
   }
 
-  Widget buildVerticalScrollbar(ScrollController controller,
+  Widget VerticalScrollbar(ScrollController controller,
       {required Widget child}) {
     return Scrollbar(
       thickness: 10,
@@ -360,7 +351,7 @@ class _CandidateListState extends State<CandidateList> {
     );
   }
 
-  Widget buildHorizontalScrollbar(ScrollController controller,
+  Widget HorizontalScrollbar(ScrollController controller,
       {required Widget child}) {
     return Scrollbar(
       thickness: 10,
@@ -374,7 +365,6 @@ class _CandidateListState extends State<CandidateList> {
     );
   }
 
-  // ignore: non_constant_identifier_names
   Widget DataTableWidget(List<Map<String, dynamic>> candidates) {
     return ConstrainedBox(
       constraints:
@@ -551,13 +541,13 @@ class _CandidateListState extends State<CandidateList> {
       builder: (context) => AlertDialog(
         title: const Text('Update Bank Detail',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        content: _buildBankForm(),
-        actions: _buildDialogActions(),
+        content: BankForm(),
+        actions: DialogActions(),
       ),
     );
   }
 
-  Widget _buildBankForm() {
+  Widget BankForm() {
     return Form(
       key: _formKey,
       child: Column(
@@ -582,7 +572,7 @@ class _CandidateListState extends State<CandidateList> {
     );
   }
 
-  List<Widget> _buildDialogActions() {
+  List<Widget> DialogActions() {
     return [
       TextButton(
         onPressed: () => Navigator.of(context).pop(),

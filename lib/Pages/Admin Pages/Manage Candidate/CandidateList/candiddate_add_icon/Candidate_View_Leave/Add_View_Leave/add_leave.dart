@@ -93,213 +93,210 @@ class AddleaveState extends State<AddLeave> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Card(
-          color: const Color.fromARGB(255, 250, 246, 246),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Card(
-                color: const Color(0xffF0F9FA),
-                shape: const RoundedRectangleBorder(
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 1,
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Add Leave',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      const Divider(
-                        color: Colors.black,
-                        thickness: 0.3,
-                      ),
-                      const SizedBox(height: 16),
-                      const Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Candidate name: rajesh kumar',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'Email: rajesh.kumar@drishinfo.com',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              'AICTE ID: abcd1234',
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          Dropdown(
-                            'Select Leave Type',
-                            leave_value,
-                            'please select the leave type',
-                            leave_items,
-                            (value) {
-                              setState(() {
-                                leave_value = value;
-                              });
-                              _formKey.currentState?.validate();
-                            },
-                          ),
-                          const SizedBox(width: 16),
-                          Dropdown(
-                            'Select Day types',
-                            day_value,
-                            'please select the day types',
-                            days_leave_items,
-                            (value) {
-                              setState(() {
-                                day_value = value;
-                              });
-                              _formKey.currentState?.validate();
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: controllerStartDate,
-                              decoration: InputDecoration(
-                                labelText: 'Start Date *',
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.white,
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () => _selectStartDate(context),
-                                ),
-                              ),
-                              readOnly: true,
-                              validator: (value) {
-                                if (_startDate == null) {
-                                  return 'Start date required';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: TextFormField(
-                              controller: controllerEndDate,
-                              decoration: InputDecoration(
-                                labelText: 'End Date *',
-                                border: const OutlineInputBorder(),
-                                fillColor: Colors.white,
-                                filled: true,
-                                suffixIcon: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () => _selectEndDate(context),
-                                ),
-                              ),
-                              readOnly: true,
-                              validator: (value) {
-                                if (_endDate == null) {
-                                  return 'End date required';
-                                }
-                                if (_endDate!.isBefore(_startDate!)) {
-                                  return 'End date cannot be before start date';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 16),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              Card(
-                shape: const RoundedRectangleBorder(
-                    side: BorderSide(
+    return Form(
+      key: _formKey,
+      child: Card(
+        color: const Color.fromARGB(255, 250, 246, 246),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              color: const Color(0xffF0F9FA),
+              shape: const RoundedRectangleBorder(
+                side: BorderSide(
                   color: Colors.black,
                   width: 1,
-                )),
-                child: Row(
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: DataTable(
-                        headingRowColor:
-                            WidgetStateProperty.all(Colors.blueGrey),
-                        columns: const [
-                          DataColumn(
-                            label: Text('Leave Type'),
-                          ),
-                          DataColumn(
-                            label: Text('Consumed'),
-                          ),
-                          DataColumn(
-                            label: Text('Available'),
-                          ),
-                        ],
-                        rows: const [
-                          DataRow(cells: [
-                            DataCell(Text('Medical Leave')),
-                            DataCell(Text('2')),
-                            DataCell(Text('4')),
-                          ]),
-                          DataRow(cells: [
-                            DataCell(Text('Casual Leave')),
-                            DataCell(Text('1')),
-                            DataCell(Text('3')),
-                          ]),
-                          DataRow(cells: [
-                            DataCell(Text('Loss of Pay')),
-                            DataCell(Text('3')),
-                            DataCell(Text('No limit')),
-                          ]),
-                        ],
-                      ),
+                    const Text(
+                      'Add Leave',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
+                    const Divider(
+                      color: Colors.black,
+                      thickness: 0.3,
+                    ),
+                    const SizedBox(height: 16),
+                    const Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Candidate name: rajesh kumar',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'Email: rajesh.kumar@drishinfo.com',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            'AICTE ID: abcd1234',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      children: [
+                        Dropdown(
+                          'Select Leave Type',
+                          leave_value,
+                          'please select the leave type',
+                          leave_items,
+                          (value) {
+                            setState(() {
+                              leave_value = value;
+                            });
+                            _formKey.currentState?.validate();
+                          },
+                        ),
+                        const SizedBox(width: 16),
+                        Dropdown(
+                          'Select Day types',
+                          day_value,
+                          'please select the day types',
+                          days_leave_items,
+                          (value) {
+                            setState(() {
+                              day_value = value;
+                            });
+                            _formKey.currentState?.validate();
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: controllerStartDate,
+                            decoration: InputDecoration(
+                              labelText: 'Start Date *',
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.white,
+                              filled: true,
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.calendar_today),
+                                onPressed: () => _selectStartDate(context),
+                              ),
+                            ),
+                            readOnly: true,
+                            validator: (value) {
+                              if (_startDate == null) {
+                                return 'Start date required';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: TextFormField(
+                            controller: controllerEndDate,
+                            decoration: InputDecoration(
+                              labelText: 'End Date *',
+                              border: const OutlineInputBorder(),
+                              fillColor: Colors.white,
+                              filled: true,
+                              suffixIcon: IconButton(
+                                icon: const Icon(Icons.calendar_today),
+                                onPressed: () => _selectEndDate(context),
+                              ),
+                            ),
+                            readOnly: true,
+                            validator: (value) {
+                              if (_endDate == null) {
+                                return 'End date required';
+                              }
+                              if (_endDate!.isBefore(_startDate!)) {
+                                return 'End date cannot be before start date';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              Align(
-                alignment: Alignment.centerRight,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white,
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(0),
-                      side: const BorderSide(
-                        color: Colors.white,
-                      ),
+            ),
+            const SizedBox(height: 30),
+            Card(
+              shape: const RoundedRectangleBorder(
+                  side: BorderSide(
+                color: Colors.black,
+                width: 1,
+              )),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: DataTable(
+                      headingRowColor: WidgetStateProperty.all(Colors.blueGrey),
+                      columns: const [
+                        DataColumn(
+                          label: Text('Leave Type'),
+                        ),
+                        DataColumn(
+                          label: Text('Consumed'),
+                        ),
+                        DataColumn(
+                          label: Text('Available'),
+                        ),
+                      ],
+                      rows: const [
+                        DataRow(cells: [
+                          DataCell(Text('Medical Leave')),
+                          DataCell(Text('2')),
+                          DataCell(Text('4')),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text('Casual Leave')),
+                          DataCell(Text('1')),
+                          DataCell(Text('3')),
+                        ]),
+                        DataRow(cells: [
+                          DataCell(Text('Loss of Pay')),
+                          DataCell(Text('3')),
+                          DataCell(Text('No limit')),
+                        ]),
+                      ],
                     ),
                   ),
-                  onPressed: _validateAndSubmit,
-                  child: const Text('Submit'),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.green,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                    side: const BorderSide(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onPressed: _validateAndSubmit,
+                child: const Text('Submit'),
+              ),
+            ),
+          ],
         ),
       ),
     );

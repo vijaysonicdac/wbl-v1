@@ -65,51 +65,48 @@ class StipendclassState extends State<Stipendclass> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 4,
-            runSpacing: 8.0,
-            alignment: WrapAlignment.start,
-            children: [
-              _buildSearchField(),
-              mySearchButton(selectedCohort, cohortList, 'Current Cohort'),
-              mySearchButton(selectedState, stateList, 'State'),
-              mySearchButton(selectedLevel, levelList, 'Level'),
-              mySearchButton(selectedYear, yearList, 'Year'),
-            ],
-          ),
-          const SizedBox(height: 10),
-          isLoading
-              ? Center(child: CircularProgressIndicator())
-              : Expanded(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                          minWidth: screenWidth - 200),
-                      child: Card(
-                        child: DataTable(
-                          headingRowColor: WidgetStateProperty.all(
-                            const Color.fromARGB(255, 224, 230, 224),
-                          ),
-                          columns: _buildColumns(),
-                          rows: filtercandidate.isNotEmpty
-                              ? filtercandidate
-                                  .map((Map<String, dynamic> candidate) =>
-                                      _buildRows(candidate))
-                                  .toList()
-                              : [],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 4,
+          runSpacing: 8.0,
+          alignment: WrapAlignment.start,
+          children: [
+            _buildSearchField(),
+            mySearchButton(selectedCohort, cohortList, 'Current Cohort'),
+            mySearchButton(selectedState, stateList, 'State'),
+            mySearchButton(selectedLevel, levelList, 'Level'),
+            mySearchButton(selectedYear, yearList, 'Year'),
+          ],
+        ),
+        const SizedBox(height: 10),
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: screenWidth - 200),
+                    child: Card(
+                      child: DataTable(
+                        headingRowColor: WidgetStateProperty.all(
+                          const Color.fromARGB(255, 224, 230, 224),
                         ),
+                        columns: _buildColumns(),
+                        rows: filtercandidate.isNotEmpty
+                            ? filtercandidate
+                                .map((Map<String, dynamic> candidate) =>
+                                    _buildRows(candidate))
+                                .toList()
+                            : [],
                       ),
                     ),
                   ),
                 ),
-        ],
-      ),
+              ),
+      ],
     );
   }
 

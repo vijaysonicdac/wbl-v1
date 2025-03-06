@@ -76,16 +76,14 @@ class CohortpageState extends State<Cohortpage> {
   Widget build(BuildContext context) {
     return Form(
       key: _formkey,
-      child: Card(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: buildInfoCard(),
-            ),
-            buildSubmitButton(),
-          ],
-        ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: buildInfoCard(),
+          ),
+          buildSubmitButton(),
+        ],
       ),
     );
   }

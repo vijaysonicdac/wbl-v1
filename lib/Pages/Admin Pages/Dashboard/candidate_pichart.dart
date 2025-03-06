@@ -12,8 +12,18 @@ class MyColumn extends StatefulWidget {
 
 class _MyColumnState extends State<MyColumn> {
   List<_ChartData> chartData = [
+    _ChartData('Jan', 50.3),
+    _ChartData('Feb', 60.2),
+    _ChartData('Mar', 45.6),
+    _ChartData('Apr', 70.1),
+    _ChartData('May', 55.4),
+    _ChartData('Jun', 65.8),
     _ChartData('Jul', 71.4),
     _ChartData('Aug', 28.6),
+    _ChartData('Sep', 48.9),
+    _ChartData('Oct', 32.7),
+    _ChartData('Nov', 52.1),
+    _ChartData('Dec', 40.0),
   ];
   List<_ChartData> genderChartData = [
     _ChartData('Male', 71.4),
@@ -71,140 +81,132 @@ class _MyColumnState extends State<MyColumn> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.grey[200],
-      padding: const EdgeInsets.all(8),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDropdownSection(context),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        bool isSmallScreen = constraints.maxWidth <= 800;
-                        return Column(
-                          children: [
-                            GridView.builder(
-                              shrinkWrap: true,
-                              gridDelegate:
-                                  SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: isSmallScreen ? 2 : 3,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                                childAspectRatio:
-                                    isSmallScreen ? 12 / 3.5 : 10 / 3.5,
-                              ),
-                              itemCount: statsData.length,
-                              itemBuilder: (context, index) {
-                                final stat = statsData[index];
-                                return ClipRRect(
-                                  borderRadius: BorderRadius.circular(5),
-                                  child: Card(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(
-                                          isSmallScreen ? 6 : 10),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Container(
-                                            padding: EdgeInsets.all(
-                                                isSmallScreen ? 8 : 10),
-                                            decoration: BoxDecoration(
-                                              color: stat['color'],
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                            child: Icon(
-                                              stat['icon'],
-                                              color: stat['iconColor'],
-                                              size: isSmallScreen ? 18 : 24,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildDropdownSection(context),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      bool isSmallScreen = constraints.maxWidth <= 800;
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: isSmallScreen ? 2 : 3,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                              childAspectRatio:
+                                  isSmallScreen ? 12 / 3.5 : 10 / 3.5,
+                            ),
+                            itemCount: statsData.length,
+                            itemBuilder: (context, index) {
+                              final stat = statsData[index];
+                              return ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: Card(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.all(isSmallScreen ? 6 : 10),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.all(
+                                              isSmallScreen ? 8 : 10),
+                                          decoration: BoxDecoration(
+                                            color: stat['color'],
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                          ),
+                                          child: Icon(
+                                            stat['icon'],
+                                            color: stat['iconColor'],
+                                            size: isSmallScreen ? 18 : 24,
+                                          ),
+                                        ),
+                                        const Spacer(),
+                                        Flexible(
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.end,
+                                              children: [
+                                                Text(
+                                                  stat['title'],
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        isSmallScreen ? 14 : 15,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  maxLines: 1,
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  stat['value'],
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        isSmallScreen ? 10 : 12,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  textAlign: TextAlign.end,
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          const Spacer(),
-                                          Flexible(
-                                            child: FittedBox(
-                                              fit: BoxFit.scaleDown,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    stat['title'],
-                                                    style: TextStyle(
-                                                      fontSize: isSmallScreen
-                                                          ? 14
-                                                          : 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    maxLines: 1,
-                                                    textAlign: TextAlign.end,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    stat['value'],
-                                                    style: TextStyle(
-                                                      fontSize: isSmallScreen
-                                                          ? 10
-                                                          : 12,
-                                                    ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    textAlign: TextAlign.end,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 5),
-            Card(
-              child: Wrap(
-                children: [
-                  Expanded(
-                    child: _piChart(
-                        title: 'Monthly Stipend', chartData: chartData),
-                  ),
-                  const SizedBox(width: 50), // Space between charts
-                  Expanded(
-                    child: _piChart(
-                        title: 'Gender Distribution',
-                        chartData: genderChartData),
-                  ),
-                  const SizedBox(width: 10), // Space between charts
-                  Expanded(
-                    child: _piChart(
-                        title: 'Category Distribution',
-                        chartData: categoryChartData),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 5),
+          Card(
+            child: Wrap(
+              children: [
+                Expanded(
+                  child:
+                      _piChart(title: 'Monthly Stipend', chartData: chartData),
+                ),
+                const SizedBox(width: 50), // Space between charts
+                Expanded(
+                  child: _piChart(
+                      title: 'Gender Distribution', chartData: genderChartData),
+                ),
+                const SizedBox(width: 10), // Space between charts
+                Expanded(
+                  child: _piChart(
+                      title: 'Category Distribution',
+                      chartData: categoryChartData),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

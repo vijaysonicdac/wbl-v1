@@ -2,33 +2,45 @@ import 'dart:convert';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const String baseUrl = 'http://10.228.1.73:4000/api';
+
+// General Function to Fetch API Data (Handles POST Requests)
 Future<List<dynamic>> fetchApiData(String url) async {
   try {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('auth_token'); // ✅ Retrieve token
+
+    if (token == null) {
+      throw Exception('❌ No token found. Please log in again.');
+    }
+
     final response = await http.post(
       Uri.parse(url),
-      headers: {"content-type": "application/json"},
-      body: jsonEncode({"id": "valid_id_here"}),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token", // ✅ Include authentication token
+      },
+      body: jsonEncode({}),
     );
+
     if (kDebugMode) {
       print("Response status: ${response.statusCode}");
-    }
-    if (kDebugMode) {
       print("Response body: ${response.body}");
     }
 
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
-      if (kDebugMode) {
-        print("Output: $data");
-      }
       return data;
+    } else if (response.statusCode == 401) {
+      throw Exception(
+          '❌ Unauthorized: Token may have expired. Please log in again.');
     } else {
-      throw Exception('Failed to load data from $url');
+      throw Exception('❌ Failed to load data from $url');
     }
   } catch (error) {
-    throw Exception('Error fetching data from $url: $error');
+    throw Exception('❌ Error fetching data from $url: $error');
   }
 }
 
@@ -72,6 +84,6 @@ Future<List<dynamic>> getVacancyData() async {
 
 // Function to get stipend ID data
 Future<Map<String, dynamic>> getStipendId() async {
-  const String endpoint = '/Stipend/317';
+  const String endpoint = '/Stipend/47';
   return fetchApiGetData(baseUrl + endpoint);
 }

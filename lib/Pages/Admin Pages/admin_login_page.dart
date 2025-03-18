@@ -8,7 +8,6 @@ import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candida
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/Cohort/candidate_cohart.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/Stipend/candidate_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/Vacancy/candiatate_vacancy_page.dart';
-import 'package:wbl/Pages/Candidate%20Pages/Stipend/stipend.dart';
 import 'package:wbl/Pages/Login%20Page/Enrollment%20Form/Admin%20Enrollment%20Form/participating_institution_registration.dart';
 import 'package:wbl/Pages/Welcome%20Page/welcome_page.dart';
 import 'package:wbl/Reusable%20Widgets/Admin%20Page%20Reusable%20Widgets/new_loginpage_format.dart';

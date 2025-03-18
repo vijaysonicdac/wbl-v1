@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wbl/Database%20Functions/GET%20API%20CALL/Delete%20Api%20functions/delete_api_function.dart';
+import 'package:wbl/Database%20Functions/Delete%20Api%20functions/delete_api_function.dart';
 import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
 
 class Stipendclass extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wbl/Database%20Functions/GET%20API%20CALL/Delete%20Api%20functions/delete_api_function.dart';
+import 'package:wbl/Database%20Functions/Delete%20Api%20functions/delete_api_function.dart';
 import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
 import 'package:wbl/Pages/Admin%20Pages/Vacancy/Vacancy_Add_icon/add_vacancy.dart';
 import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
@@ -44,7 +44,7 @@ class VacancyClassState extends State<VacancyClass> {
       }
       setState(() {
         vacancyData = List<Map<String, dynamic>>.from(data);
-        filteredVacancy = vacancyData; // Initially show all data
+        filteredVacancy = vacancyData;
         isLoading = false;
       });
     } catch (e) {
@@ -146,6 +146,7 @@ class VacancyClassState extends State<VacancyClass> {
     final columns = [
       "VACANCY",
       "LEVEL",
+      "id",
       "START DATE",
       "END DATE",
       "COHORT",
@@ -166,6 +167,7 @@ class VacancyClassState extends State<VacancyClass> {
         cells: [
           buildDataCell(candidate['numbersOfVacancy']),
           buildDataCell(candidate['level']),
+          buildDataCell(candidate['id']),
           buildDataCell(candidate['startDate']),
           buildDataCell(candidate['endDate']),
           buildDataCell(candidate['cohortId']),
@@ -188,6 +190,10 @@ class VacancyClassState extends State<VacancyClass> {
                     .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()) ||
+                candidate["id"]
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) || // test
                 candidate["startDate"]
                     .toString()
                     .toLowerCase()

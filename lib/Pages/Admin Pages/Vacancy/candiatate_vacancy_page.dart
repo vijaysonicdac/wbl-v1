@@ -33,7 +33,7 @@ class VacancyClassState extends State<VacancyClass> {
   @override
   void initState() {
     super.initState();
-    fetchVacancyData();
+    // fetchVacancyData();
   }
 
   Future<void> fetchVacancyData() async {
@@ -75,23 +75,19 @@ class VacancyClassState extends State<VacancyClass> {
                 buildAddButton(),
               ],
             ),
-            isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.vertical,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: ConstrainedBox(
-                          constraints:
-                              BoxConstraints(minWidth: screenWidth - 200),
-                          child: buildDataTable(),
-                        ),
-                      ),
-                    ),
+          
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: screenWidth - 200),
+                    child: buildDataTable(),
                   ),
+                ),
+              ),
+            ),
           ],
         ),
       ),

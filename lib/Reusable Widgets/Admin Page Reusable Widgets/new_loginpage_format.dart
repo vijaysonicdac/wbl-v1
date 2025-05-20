@@ -11,15 +11,16 @@ class NewLoginpageFormat extends StatefulWidget {
       {super.key,
       required this.menuItems,
       required this.user,
+      this.bodyWidget,
       this.selectedButtonName});
 
   final List<Map<String, dynamic>> menuItems;
   final Map<String, dynamic>? user;
-  static Widget? bodyWidget;
+  Widget? bodyWidget;
   String? selectedButtonName;
 
-  static int? currentMenuIndex;
-  static int? currentSubmenuIndex;
+  static int? selectedMenuItem;
+  static int? selectedsubMenuItem;
 
   @override
   State<NewLoginpageFormat> createState() => _NewLoginpageFormatState();
@@ -31,11 +32,11 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
   bool isDrawerOpen = true;
   int smallScreenWidthSize = 600;
   void getSubMenuItems() {
-    if (NewLoginpageFormat.bodyWidget == null) {
-      NewLoginpageFormat.currentSubmenuIndex = 0;
+    if (widget.bodyWidget == null) {
+      NewLoginpageFormat.selectedsubMenuItem = 0;
     }
 
-    Map subtitles = widget.menuItems[NewLoginpageFormat.currentMenuIndex ??= 0]
+    Map subtitles = widget.menuItems[NewLoginpageFormat.selectedMenuItem ??= 0]
             ['subtitle'] ??
         {};
     if (subtitles.isNotEmpty) {
@@ -47,7 +48,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
 
   @override
   void initState() {
-    NewLoginpageFormat.currentMenuIndex ??= 0;
+    NewLoginpageFormat.selectedMenuItem ??= 0;
     menuItems = widget.menuItems.map((menuItem) {
       return menuItem['title'].keys.first;
     }).toList();
@@ -84,13 +85,13 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
               selectedItemColor: Colors.black,
               unselectedItemColor: Colors.grey,
               showUnselectedLabels: true,
-              currentIndex: NewLoginpageFormat.currentMenuIndex ??= 0,
+              currentIndex: NewLoginpageFormat.selectedMenuItem ??= 0,
               onTap: (value) {
                 setState(() {
                   if (menuItems[value] == 'Logout') {
                     MyFun.navigatToPagewithoutBack(context, WelcomePage());
                   }
-                  NewLoginpageFormat.currentMenuIndex = value;
+                  NewLoginpageFormat.selectedMenuItem = value;
                   getSubMenuItems();
                 });
               },
@@ -145,15 +146,15 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
   }
 
   String getFormattedMenuPath() {
-    String menu = (NewLoginpageFormat.currentMenuIndex != null)
+    String menu = (NewLoginpageFormat.selectedMenuItem != null)
         ? widget
-            .menuItems[NewLoginpageFormat.currentMenuIndex!]['title'].keys.first
+            .menuItems[NewLoginpageFormat.selectedMenuItem!]['title'].keys.first
         : "";
 
-    String submenu = (NewLoginpageFormat.currentSubmenuIndex != null &&
+    String submenu = (NewLoginpageFormat.selectedsubMenuItem != null &&
             subMenuItems.isNotEmpty &&
-            NewLoginpageFormat.currentSubmenuIndex! < subMenuItems.length)
-        ? " > ${subMenuItems[NewLoginpageFormat.currentSubmenuIndex!]}"
+            NewLoginpageFormat.selectedsubMenuItem! < subMenuItems.length)
+        ? " > ${subMenuItems[NewLoginpageFormat.selectedsubMenuItem!]}"
         : "";
 
     String button = (widget.selectedButtonName?.isNotEmpty ?? false)
@@ -235,7 +236,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
             PopupMenuItem(
               child: const Text('Profile'),
               onTap: () {
-                NewLoginpageFormat.bodyWidget = widget.user!['profile'];
+                widget.bodyWidget = widget.user!['profile'];
                 MyFun.navigatToPagewithoutBack(
                     context, widget.user!['profile']);
               },
@@ -243,6 +244,8 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
             PopupMenuItem(
               child: const Text('Logout'),
               onTap: () {
+                NewLoginpageFormat.selectedMenuItem = null;
+                NewLoginpageFormat.selectedsubMenuItem = null;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -269,26 +272,26 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
               child: ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    NewLoginpageFormat.currentSubmenuIndex = i;
+                    NewLoginpageFormat.selectedsubMenuItem = i;
                   });
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: NewLoginpageFormat.currentSubmenuIndex == i
+                  backgroundColor: NewLoginpageFormat.selectedsubMenuItem == i
                       ? Colors.grey // Selected button background
                       : Colors.transparent, // Default background
                   shape: RoundedRectangleBorder(
-                    borderRadius: NewLoginpageFormat.currentSubmenuIndex == i
+                    borderRadius: NewLoginpageFormat.selectedsubMenuItem == i
                         ? BorderRadius.circular(10) // Rounded selected
                         : BorderRadius.zero, // Square not selected
                   ),
                   elevation:
-                      NewLoginpageFormat.currentSubmenuIndex == i ? 2 : 0,
+                      NewLoginpageFormat.selectedsubMenuItem == i ? 2 : 0,
                 ),
                 child: Text(
                   subMenuItems[i],
                   style: TextStyle(
                     color: Colors.black,
-                    fontWeight: NewLoginpageFormat.currentSubmenuIndex == i
+                    fontWeight: NewLoginpageFormat.selectedsubMenuItem == i
                         ? FontWeight.bold
                         : FontWeight.normal,
                   ),
@@ -301,28 +304,28 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
   }
 
   Widget getbodyWidget() {
-    final bodyWidget = NewLoginpageFormat.bodyWidget;
-    NewLoginpageFormat.bodyWidget = null;
+    final bodyWidgets = widget.bodyWidget;
+    widget.bodyWidget = null;
 
     Map<String, dynamic> titleSubtileValue =
-        widget.menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['title'];
+        widget.menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]['title'];
     if (kDebugMode) {
       print('v $titleSubtileValue');
     }
     if (titleSubtileValue[
-            menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]] ==
+            menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]] ==
         null) {
       titleSubtileValue = widget
-          .menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['subtitle'];
+          .menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]['subtitle'];
       if (kDebugMode) {
         print('v $titleSubtileValue');
       }
-    }
-    return bodyWidget ??
-        widget.menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['title']
-            [menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]] ??
-        widget.menuItems[NewLoginpageFormat.currentMenuIndex ?? 0]['subtitle']
-            [subMenuItems[NewLoginpageFormat.currentSubmenuIndex ?? 0]];
+    } 
+    return bodyWidgets ??
+        widget.menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]['title']
+            [menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]] ??
+        widget.menuItems[NewLoginpageFormat.selectedMenuItem ?? 0]['subtitle']
+            [subMenuItems[NewLoginpageFormat.selectedsubMenuItem ?? 0]];
   }
 
   Widget myDrawer() {
@@ -369,7 +372,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                     child: TextButton(
                       style: TextButton.styleFrom(
                         backgroundColor:
-                            NewLoginpageFormat.currentMenuIndex == j
+                            NewLoginpageFormat.selectedMenuItem == j
                                 ? Colors.grey[200]
                                 : Colors.transparent,
                         shape: RoundedRectangleBorder(
@@ -381,7 +384,7 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                             MyFun.navigatToPagewithoutBack(
                                 context, WelcomePage());
                           }
-                          NewLoginpageFormat.currentMenuIndex = j;
+                          NewLoginpageFormat.selectedMenuItem = j;
                           getSubMenuItems();
                         });
                       },
@@ -390,21 +393,21 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                           Icon(
                             widget.menuItems[j]['icon'],
                             size: 28,
-                            color: NewLoginpageFormat.currentMenuIndex == j
+                            color: NewLoginpageFormat.selectedMenuItem == j
                                 ? Colors.black
                                 : Colors.grey,
                           ),
                           if (isDrawerOpen)
                             myMenuTitle(menuItems[j],
-                                NewLoginpageFormat.currentMenuIndex == j),
+                                NewLoginpageFormat.selectedMenuItem == j),
                           if (isDrawerOpen) myExpended(),
                           if (isDrawerOpen)
                             if (widget.menuItems[j]['subtitle'] != null)
                               Icon(
-                                NewLoginpageFormat.currentMenuIndex == j
+                                NewLoginpageFormat.selectedMenuItem == j
                                     ? Icons.remove
                                     : Icons.add,
-                                color: NewLoginpageFormat.currentMenuIndex == j
+                                color: NewLoginpageFormat.selectedMenuItem == j
                                     ? Colors.black
                                     : Colors.grey,
                               )
@@ -412,12 +415,12 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                       ),
                     ),
                   ),
-                  if (j == NewLoginpageFormat.currentMenuIndex && isDrawerOpen)
+                  if (j == NewLoginpageFormat.selectedMenuItem && isDrawerOpen)
                     for (int k = 0; k <= subMenuItems.length - 1; k++)
                       TextButton(
                         style: TextButton.styleFrom(
                           backgroundColor:
-                              NewLoginpageFormat.currentSubmenuIndex == k
+                              NewLoginpageFormat.selectedsubMenuItem == k
                                   ? Colors.grey[300]
                                   : Colors.transparent,
                           shape: RoundedRectangleBorder(
@@ -426,27 +429,27 @@ class _NewLoginpageFormatState extends State<NewLoginpageFormat> {
                         ),
                         onPressed: () {
                           setState(() {
-                            NewLoginpageFormat.currentSubmenuIndex = k;
+                            NewLoginpageFormat.selectedsubMenuItem = k;
                           });
                         },
                         child: Row(
                           children: [
                             SizedBox(
-                              width: NewLoginpageFormat.currentSubmenuIndex == k
+                              width: NewLoginpageFormat.selectedsubMenuItem == k
                                   ? 18
                                   : 30,
                             ),
-                            if (NewLoginpageFormat.currentSubmenuIndex == k)
+                            if (NewLoginpageFormat.selectedsubMenuItem == k)
                               Icon(
-                                Icons.arrow_back_ios,
+                                Icons.arrow_forward_ios,
                                 size: 12,
                                 color:
-                                    NewLoginpageFormat.currentSubmenuIndex == k
+                                    NewLoginpageFormat.selectedsubMenuItem == k
                                         ? Colors.black // Selected color
                                         : Colors.grey, // Default color
                               ),
                             myMenuTitle(subMenuItems[k],
-                                NewLoginpageFormat.currentSubmenuIndex == k),
+                                NewLoginpageFormat.selectedsubMenuItem == k),
                           ],
                         ),
                       ),

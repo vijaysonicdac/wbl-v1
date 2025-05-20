@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
 import 'package:wbl/Pages/Welcome%20Page/welcome_page.dart';
 
 void main() {
@@ -16,9 +17,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         primaryColor: Colors.indigo[900],
       ),
-      // home: AdminLoginPage(),
-      home: WelcomePage(),
-      // home: Testapi()
+      // home: WelcomePage(),
+      home: AdminLoginPage(),
+      // home: CohortScreen()
       // home: Vacancyclass(),
       // home: StipendPage(),
       // home: Stipendclass(),

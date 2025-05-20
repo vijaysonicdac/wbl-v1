@@ -1,10 +1,15 @@
-// ignore_for_file: prefer_final_fields, unused_local_variable, non_constant_identifier_names
+// ignore_for_file: prefer_final_fields, unused_local_variable, non_constant_identifier_names, depend_on_referenced_packages
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:wbl/Database%20Functions/GET%20API%20CALL/getstates.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_Add_Stipend/add_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_Add_assessment/assesment_add_icon.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_View_Leave/add_viewleave.dart';
 import 'package:wbl/Pages/Admin%20Pages/Manage%20Candidate/CandidateList/candiddate_add_icon/Candidate_View_Stipend/add_view_stipend.dart';
 import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
+import 'package:wbl/Reusable%20Widgets/Admin_Year_dropwon/year.dart';
 
 // ignore: must_be_immutable
 class CandidateList extends StatefulWidget {
@@ -18,78 +23,24 @@ class CandidateList extends StatefulWidget {
 
 class _CandidateListState extends State<CandidateList> {
   String selectedCohort = 'select';
-  String selectedState = 'select';
+  String? selectedState;
   String selectedLevel = 'select';
-  String selectedYear = 'select';
+  int? selectedYear;
+  bool isLoading = false;
+  // List<int> yearList = [];
   String? _selectedWidget;
   String searchQuery = '';
-  List<Map<String, dynamic>> filteredcandidate = [];
   final List<String> cohortList = [
     'select',
     'Cohort 1',
     'Cohort 2',
     'Cohort 3'
   ];
-  final List<String> stateList = ['select', 'State 1', 'State 2', 'State 3'];
-  final List<String> levelList = ['select', 'Level 1', 'Level 2', 'Level 3'];
-  final List<String> yearList = ['select', '2022', '2023', '2024'];
+  List<String> stateList = [];
+  final List<String> levelList = ['Select', 'Level 1', 'Level 2', 'Level 3'];
 
-  final List<Map<String, dynamic>> candidates = [
-    {
-      "ID": 52,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 44,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-    {
-      "ID": 50,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 4,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-    {
-      "ID": 5,
-      "DOB": "21-06-2023",
-      "Year": 2023,
-      "Name": "Rajesh Kumar",
-      "Email": "rajesh.kumar@example.com",
-      "Mobile": "+1234567890",
-      "Status": "Active"
-    },
-    {
-      "ID": 10,
-      "DOB": "01-05-2023",
-      "Year": 2023,
-      "Name": "Vaidik Goyal",
-      "Email": "vaidik.goyal@example.com",
-      "Mobile": "+0987654321",
-      "Status": "Inactive"
-    },
-  ];
+  List<Map<String, dynamic>> candidates = [];
+  List<Map<String, dynamic>> filteredcandidate = [];
 
   ScrollController horizontal = ScrollController();
   ScrollController vertical = ScrollController();
@@ -101,10 +52,113 @@ class _CandidateListState extends State<CandidateList> {
     super.dispose();
   }
 
+  Stream<List<Map<String, dynamic>>> candidateStream() async* {
+    try {
+      final response =
+          await http.get(Uri.parse('http://localhost:8081/candidates'));
+
+      if (response.statusCode == 200) {
+        List data = jsonDecode(response.body);
+        yield data.cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to load candidates');
+      }
+    } catch (e) {
+      print("Stream error: $e");
+      yield [];
+    }
+  }
+
+  void searchlist() {
+    setState(() {
+      if (searchQuery.isEmpty) {
+        filteredcandidate = candidates;
+      } else {
+        filteredcandidate = candidates
+            .where((candidate) =>
+                candidate['id']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['dateOfJoining']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['dob']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['firstName']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['lastName']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['email']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()) ||
+                candidate['mobile']
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchQuery.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
+  confirmDelete(int candidateId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Do you want to delete Vacancy?',
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          content: const Text('You wont be able to revert this!'),
+          actions: [
+            ElevatedButton(
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: Colors.blue[700]),
+              child: const Text('Yes, Delete it!',
+                  style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                setState(() {
+                  candidates.removeWhere((c) => c['id'] == candidateId);
+                });
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('NO', style: TextStyle(color: Colors.white)),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    filteredcandidate = candidates;
+    initFetchstates();
+    candidateStream().listen((data) {
+      setState(() {
+        candidates = data;
+        filteredcandidate = candidates;
+      });
+    });
+  }
+
+  void initFetchstates() async {
+    List<String> names = await fetchStateNames();
+    setState(() {
+      stateList = ['Select', ...names];
+      selectedState = stateList.isNotEmpty ? stateList.first : null;
+    });
   }
 
   String? validateAccountNumber(String? value) {
@@ -140,35 +194,62 @@ class _CandidateListState extends State<CandidateList> {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < 500) {
-          return buildCardView(); // cards small screens
-        } else {
-          return buildTableView(); // table larger screens
-        }
+        return constraints.maxWidth < 500
+            ? buildCardView()
+            : buildTableView(); // Adjust the breakpoint as needed
+        // if (constraints.maxWidth < 500) {
+        //   return buildCardView(); // Small screen
+        // } else {
+        //   return buildTableView(); // Large screen
+        // }
       },
     );
   }
 
-// Table larger screens
   Widget buildTableView() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SearchWrap(),
         Expanded(
-          child: VerticalScrollbar(
-            vertical,
-            child: HorizontalScrollbar(
-              horizontal,
-              child: DataTableWidget(candidates),
-            ),
+          child: StreamBuilder<List<Map<String, dynamic>>>(
+            stream: candidateStream(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                return const Center(child: Text("No data available"));
+              }
+
+              final candidates = snapshot.data!;
+
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  return VerticalScrollbar(
+                    vertical,
+                    child: HorizontalScrollbar(
+                      horizontal,
+                      child: constraints.maxWidth < 500
+                          ? buildCardView()
+                          : DataTableWidget(candidates),
+                    ),
+                  );
+                },
+              );
+            },
           ),
-        ),
+        )
       ],
     );
   }
 
   Widget buildCardView() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SearchWrap(),
         const SizedBox(height: 10),
@@ -188,64 +269,93 @@ class _CandidateListState extends State<CandidateList> {
                 bool isActive = candidate['Status'].toLowerCase() == "active";
 
                 return Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 4,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Name: ${candidate['Name']}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                "ID: ${candidate['ID']}",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Text("Email:",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text(candidate['Email'],
-                              style: TextStyle(color: Colors.grey[700])),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Mobile: ${candidate['Mobile']}"),
-                            ],
-                          ),
-                          SizedBox(height: 4),
-                          Text("DOB: ${candidate['DOB']}"),
-                          SizedBox(height: 4),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Year: ${candidate['Year']}"),
-                              Text(
-                                "Status: ${candidate['Status']}",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: isActive ? Colors.green : Colors.red,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Divider(),
-                          buildActionButtons(candidate),
-                        ],
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                );
+                    elevation: 4,
+                    child: StreamBuilder<Map<String, dynamic>>(
+                      stream: candidateStream().asyncExpand((list) =>
+                          Stream.fromIterable(list)), // pass your actual ID
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Center(
+                              child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return const Center(
+                              child: Text('No candidate data found.'));
+                        }
+
+                        final candidate = snapshot.data!;
+                        final isActive = candidate['isActive'] == '1';
+
+                        return SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Name: ${candidate['firstName']} ${candidate['lastName']}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      "ID: ${candidate['id']}",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Text("Email:",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold)),
+                                Text(candidate['email'],
+                                    style: TextStyle(color: Colors.grey[700])),
+                                SizedBox(height: 8),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Mobile: ${candidate['mobile']}"),
+                                  ],
+                                ),
+                                SizedBox(height: 4),
+                                Text("DOB: ${candidate['dateOfJoining']}"),
+                                SizedBox(height: 4),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text("Year: ${candidate['dob']}"),
+                                    Text(
+                                      "Status: ${candidate['isActive']}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: isActive
+                                            ? Colors.green
+                                            : Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(),
+                                buildActionButtons(candidate),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ));
               },
             ),
           ),
@@ -263,7 +373,7 @@ class _CandidateListState extends State<CandidateList> {
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: SizedBox(
-            width: 200,
+            width: 180,
             child: TextField(
               decoration: const InputDecoration(
                 labelText: 'Search',
@@ -284,47 +394,58 @@ class _CandidateListState extends State<CandidateList> {
             selectedCohort = newValue!;
           });
         }),
-        Dropdown("State", selectedState, stateList, (newValue) {
+        Dropdown("Select State", selectedState ?? "", stateList, (newValue) {
           setState(() {
-            selectedState = newValue!;
+            selectedState = newValue;
           });
         }),
-        Dropdown("Level", selectedLevel, levelList, (newValue) {
+        Dropdown("Select Level", selectedLevel, levelList, (newValue) {
           setState(() {
             selectedLevel = newValue!;
           });
         }),
-        Dropdown("Year", selectedYear, yearList, (newValue) {
-          setState(() {
-            selectedYear = newValue!;
-          });
-        }),
+        YearDropdown(
+          selectedYear: selectedYear,
+          onChanged: (newValue) {
+            setState(() {
+              selectedYear = newValue;
+            });
+          },
+        ),
       ],
     );
   }
 
-  Widget Dropdown(String label, String selectedValue, List<String> items,
+  Widget Dropdown(String label, String? selectedValue, List<String> items,
       ValueChanged<String?> onChanged) {
     return mysearchbutton(
-      selectedValue,
+      selectedValue ?? "Select",
       items,
       label,
       onChanged,
     );
   }
 
-  Widget mysearchbutton(String selectedItem, List<String> items,
+  Widget mysearchbutton(String? selectedItem, List<String> items,
       String labelText, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: SizedBox(
-        width: 150,
+        width: 200,
         child: DropdownButtonFormField<String>(
-          value: selectedItem,
+          hint: Text("Select", style: TextStyle(color: Colors.black)),
+          value: items.contains(selectedItem) ? selectedItem : null,
+          isExpanded: true,
           items: items.map((String item) {
             return DropdownMenuItem<String>(
               value: item,
-              child: Text(item),
+              child: Text(
+                item,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                maxLines: 1,
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
             );
           }).toList(),
           onChanged: onChanged,
@@ -385,70 +506,56 @@ class _CandidateListState extends State<CandidateList> {
       "ID",
       "D.O.J",
       "Year",
-      "Name",
+      "Full Name", // ✅ Combine First + Last here
       "Email",
       "Mobile No.",
       "Status",
       "Action"
-    ].map((title) => DataColumn(label: mylabel(title))).toList();
+    ].map((title) => DataColumn(label: Text(title))).toList();
   }
 
   DataRow buildDataRow(Map<String, dynamic> candidate) {
+    final date = DateTime.tryParse(candidate['dateOfJoining'] ?? '');
+    final formattedDate =
+        date != null ? DateFormat('yyyy-MM-dd').format(date) : 'Invalid date';
+    final dob = DateTime.tryParse(candidate['dateOfJoining'] ?? '');
+    final dobYear = dob != null ? DateFormat('yyyy').format(dob) : 'Invalid';
+
+    final fullName =
+        '${candidate['firstName'] ?? ''} ${candidate['lastName'] ?? ''}';
+
     return DataRow(
       cells: [
-        DataCell(mylabel(candidate['ID'].toString())),
-        DataCell(mylabel(candidate['DOB'].toString())),
-        DataCell(mylabel(candidate['Year'].toString())),
-        DataCell(mylabel(candidate['Name'].toString())),
-        DataCell(mylabel(candidate['Email'].toString())),
-        DataCell(mylabel(candidate['Mobile'].toString())),
-        DataCell(mylabel(candidate['Status'].toString())),
+        DataCell(SizedBox(width: 30, child: Text(candidate['id'].toString()))),
+        DataCell(Text(formattedDate)),
+        DataCell(Text(dobYear)),
+        DataCell(
+          SizedBox(
+            width: 160, // Adjust width as needed
+            child: Text(
+              fullName,
+              softWrap: true,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+        // 🔥 Remove separate Last Name column (Optional)
+        // DataCell(SizedBox(width: 80, child: Text(candidate['lastName'] ?? ''))),
+        DataCell(SizedBox(width: 150, child: Text(candidate['email'] ?? ''))),
+        DataCell(Text(candidate['mobile'].toString())),
+        DataCell(
+            SizedBox(width: 20, child: Text(candidate['isActive'].toString()))),
         DataCell(buildActionButtons(candidate)),
       ],
     );
-  }
-
-  void searchlist() {
-    setState(() {
-      if (searchQuery.isEmpty) {
-        filteredcandidate = candidates;
-      } else {
-        filteredcandidate = candidates
-            .where((candidate) =>
-                candidate['ID']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                candidate['DOB']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                candidate['Year']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                candidate['Name']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                candidate['Email']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()) ||
-                candidate['Mobile']
-                    .toString()
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()))
-            .toList();
-      }
-    });
   }
 
   Widget buildActionButtons(Map<String, dynamic> candidate) {
     return Wrap(
       children: [
         IconButton(icon: const Icon(Icons.visibility), onPressed: () {}),
-        widget.onclick ?? popup(),
+        popup(),
         IconButton(
           icon: const Icon(Icons.edit, color: Colors.blue),
           onPressed: () {
@@ -462,42 +569,6 @@ class _CandidateListState extends State<CandidateList> {
         ),
       ],
     );
-  }
-
-  confirmDelete(int candidateId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Do you want to delete Vacancy?',
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text('You wont be able to revert this!'),
-          actions: [
-            ElevatedButton(
-              style:
-                  ElevatedButton.styleFrom(backgroundColor: Colors.blue[700]),
-              child: const Text('Yes, Delete it!',
-                  style: TextStyle(color: Colors.white)),
-              onPressed: () {
-                setState(() {
-                  candidates.removeWhere((c) => c['ID'] == candidateId);
-                });
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('NO', style: TextStyle(color: Colors.white)),
-              onPressed: () => Navigator.pop(context),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget mylabel(String label) {
-    return Expanded(child: Text(label));
   }
 
   Widget popup() {

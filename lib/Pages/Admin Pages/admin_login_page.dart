@@ -70,6 +70,8 @@ class _AdminLoginPageState extends State<AdminLoginPage> {
     return NewLoginpageFormat(
       menuItems: menuItems,
       user: user,
+      selectedButtonName: widget.selectedButtonName,
+      // bodyWidget: widget.bodyWidget,
     );
   }
 }

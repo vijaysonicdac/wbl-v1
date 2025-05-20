@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wbl/Database%20Functions/Delete%20Api%20functions/delete_api_function.dart';
 import 'package:wbl/Database%20Functions/GET%20API%20CALL/get_api_function.dart';
+import 'package:wbl/Reusable%20Widgets/Admin_Year_dropwon/year.dart';
 
 class Stipendclass extends StatefulWidget {
   const Stipendclass({super.key});
@@ -11,9 +12,9 @@ class Stipendclass extends StatefulWidget {
 
 class StipendclassState extends State<Stipendclass> {
   String selectedCohort = 'select';
-  String selectedState = 'select';
+  String? selectedState;
   String selectedLevel = 'select';
-  String selectedYear = 'select';
+  int? selectedYear;
   String searchQuery = '';
 
   final List<String> cohortList = [
@@ -22,7 +23,7 @@ class StipendclassState extends State<Stipendclass> {
     'Cohort 2',
     'Cohort 3'
   ];
-  final List<String> stateList = ['select', 'State 1', 'State 2', 'State 3'];
+  List<String> stateList = [];
   final List<String> levelList = ['select', 'Level 1', 'Level 2', 'Level 3'];
   final List<String> yearList = ['select', '2022', '2023', '2024'];
 
@@ -33,32 +34,6 @@ class StipendclassState extends State<Stipendclass> {
   @override
   void initState() {
     super.initState();
-    fetchStipendData();
-  }
-
-  Future<void> fetchStipendData() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    try {
-      List<dynamic> responseData = await getApiStipend();
-      if (kDebugMode) {
-        print('$responseData');
-      }
-      setState(() {
-        candidates = List<Map<String, dynamic>>.from(responseData);
-        filtercandidate = candidates;
-        isLoading = false;
-      });
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching stipend data: $e');
-      }
-      setState(() {
-        isLoading = false;
-      });
-    }
   }
 
   @override
@@ -74,11 +49,15 @@ class StipendclassState extends State<Stipendclass> {
           runSpacing: 8.0,
           alignment: WrapAlignment.start,
           children: [
-            _buildSearchField(),
-            mySearchButton(selectedCohort, cohortList, 'Current Cohort'),
-            mySearchButton(selectedState, stateList, 'State'),
-            mySearchButton(selectedLevel, levelList, 'Level'),
-            mySearchButton(selectedYear, yearList, 'Year'),
+            SearchWrap(),
+            YearDropdown(
+              selectedYear: selectedYear,
+              onChanged: (newValue) {
+                setState(() {
+                  selectedYear = newValue;
+                });
+              },
+            ),
           ],
         ),
         const SizedBox(height: 10),
@@ -110,23 +89,94 @@ class StipendclassState extends State<Stipendclass> {
     );
   }
 
-  Widget _buildSearchField() {
+  Widget SearchWrap() {
+    return Wrap(
+      spacing: 8, // Space between dropdowns
+      runSpacing: 8, // Space between rows of dropdowns
+      alignment: WrapAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: SizedBox(
+            width: 180,
+            child: TextField(
+              decoration: const InputDecoration(
+                labelText: 'Search',
+                hintText: 'Search column',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                  searchlist();
+                });
+              },
+            ),
+          ),
+        ),
+        Dropdown("Select Cohort", selectedCohort, cohortList, (newValue) {
+          setState(() {
+            selectedCohort = newValue!;
+          });
+        }),
+        Dropdown("Select State", selectedState ?? "", stateList, (newValue) {
+          setState(() {
+            selectedState = newValue;
+          });
+        }),
+        Dropdown("Select Level", selectedLevel, levelList, (newValue) {
+          setState(() {
+            selectedLevel = newValue!;
+          });
+        }),
+        YearDropdown(
+          selectedYear: selectedYear,
+          onChanged: (newValue) {
+            setState(() {
+              selectedYear = newValue;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget Dropdown(String label, String? selectedValue, List<String> items,
+      ValueChanged<String?> onChanged) {
+    return mysearchbutton(
+      selectedValue ?? "Select",
+      items,
+      label,
+      onChanged,
+    );
+  }
+
+  Widget mysearchbutton(String? selectedItem, List<String> items,
+      String labelText, ValueChanged<String?> onChanged) {
     return Padding(
       padding: const EdgeInsets.all(4.0),
       child: SizedBox(
-        width: 150,
-        child: TextField(
-          decoration: const InputDecoration(
-            labelText: 'Search',
-            hintText: 'Search column',
-            border: OutlineInputBorder(),
+        width: 200,
+        child: DropdownButtonFormField<String>(
+          value: items.contains(selectedItem) ? selectedItem : null,
+          isExpanded: true,
+          items: items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(
+                item,
+                overflow: TextOverflow.ellipsis,
+                softWrap: false,
+                maxLines: 1,
+                style: const TextStyle(fontSize: 12, color: Colors.black),
+              ),
+            );
+          }).toList(),
+          onChanged: onChanged,
+          decoration: InputDecoration(
+            border: const OutlineInputBorder(),
+            labelText: labelText,
           ),
-          onChanged: (value) {
-            setState(() {
-              searchQuery = value;
-              searchlist();
-            });
-          },
         ),
       ),
     );
@@ -210,42 +260,6 @@ class StipendclassState extends State<Stipendclass> {
   Widget _buildLabel(String label) {
     return Expanded(
       child: Text(label),
-    );
-  }
-
-  Widget mySearchButton(
-      String selectedItem, List<String> items, String labelText) {
-    return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: SizedBox(
-        width: 150,
-        child: DropdownButtonFormField<String>(
-          value: selectedItem,
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Text(item),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              if (items == cohortList) {
-                selectedCohort = newValue!;
-              } else if (items == stateList) {
-                selectedState = newValue!;
-              } else if (items == levelList) {
-                selectedLevel = newValue!;
-              } else if (items == yearList) {
-                selectedYear = newValue!;
-              }
-            });
-          },
-          decoration: InputDecoration(
-            labelText: labelText,
-            border: const OutlineInputBorder(),
-          ),
-        ),
-      ),
     );
   }
 

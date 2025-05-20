@@ -1,14 +1,15 @@
+// ignore_for_file: use_build_context_synchronously, avoid_print
+
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wbl/AES%20Algorithm/aes_algo.dart';
 import 'package:wbl/Database%20Functions/Post%20Api/post_api.dart';
 import 'package:wbl/Pages/Admin%20Pages/admin_login_page.dart';
-
 import '../../Reusable Functions/reusable_function.dart';
 import '../../Reusable Widgets/Welcome Page Reusable Widgets/my_welcome_header.dart';
 import '../CMS Pages/cms_drawer.dart';
 import '../Candidate Pages/Drawer/candidate_dashboard.dart';
 import '../Welcome Page/welcome_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage(
